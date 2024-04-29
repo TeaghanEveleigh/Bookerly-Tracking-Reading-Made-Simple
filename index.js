@@ -9,11 +9,16 @@ const discoverRoutes = require('./src/routes/discoverRoutes');
 const pool = require("./src/config/db.js");
 const  createTables  = require("./src/config/createTables.js");
 const { options } = require("nodemon/lib/config/index.js");
+const cors = require('cors');
 //10 seconds in milliseconds
 const maxAge = 10 * 1000;
 
 // Setup express app
 const app = express();
+app.use(cors({
+    origin: '161.65.123.137'
+  }));
+  
 app.use(bodyParser.json());
 pool.connect((err) => {
     if (err) {
