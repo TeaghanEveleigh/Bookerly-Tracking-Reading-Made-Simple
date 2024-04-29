@@ -16,7 +16,7 @@ const maxAge = 10 * 1000;
 // Setup express app
 const app = express();
 app.use(cors({
-    origin: '161.65.123.137'
+    origin: 'http://localhost:3000'
   }));
   
 app.use(bodyParser.json());
