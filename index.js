@@ -15,7 +15,9 @@ const maxAge = 10 * 1000;
 
 // Setup express app
 const app = express();
-app.use(cors());
+app.use(cors({
+  origin: 'https://teaghaneveleigh.github.io'
+}));
   
 app.use(bodyParser.json());
 pool.connect((err) => {
