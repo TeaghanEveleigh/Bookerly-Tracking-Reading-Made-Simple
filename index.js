@@ -42,7 +42,9 @@ app.use('/discover', discoverRoutes);
 app.get('/',  (req, res) => {
     res.send('Hello World!');
 });
-
+app.use((req, res) => {
+    res.status(404).send('404 - Not Found');
+});
 
 const PORT = process.env.PORT || 3001; // Use the provided port by Heroku or default to 3001
 
