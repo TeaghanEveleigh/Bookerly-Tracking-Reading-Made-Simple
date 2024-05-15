@@ -1,9 +1,10 @@
-const { checkEmailExists, checkPasswordCorrect, createUser, createUserLibrary } = require('../services/userService');
 const express = require('express');
+const { checkEmailExists, checkPasswordCorrect, createUser, createUserLibrary , getDarkMode } = require('../services/userService');
+const { isAuthenticated } = require('../middleware/authMiddleware'); 
 const router = express.Router();
 
 
-router.post('/checkEmailExists', async (req, res) => {
+router.post('/checkEmailExists',  async (req, res) => {
     const email = req.body.email;
     const emailExists = await checkEmailExists(email);
     res.send({ emailExists });
@@ -16,7 +17,7 @@ router.post('/checkPasswordCorrect', async (req, res) => {
 });
 router.post('/login', async (req, res) => {
     const { email, password } = req.body;
-
+   
     try {
         const emailExists = await checkEmailExists(email);
         if (!emailExists) {
@@ -30,9 +31,16 @@ router.post('/login', async (req, res) => {
 
 
         res.send({ success: true });
+        req.session.user = {
+            username: req.body.username,
+            isAuthenticated : true
+            // darkmode : getDarkMode(req.body.email)
+            // Other user data you want to store
+        };
     } catch (error) {
         res.status(500).send({ success: false, error: error.message });
     }
+   
 });
 
 router.post('/signup', async (req, res) => {
@@ -47,9 +55,15 @@ router.post('/signup', async (req, res) => {
         await createUser(email, password);
 
         res.send({ success: true });
+        req.session.user = {
+            username: req.body.username,
+            darkmode : getDarkMode(req.body.email)
+            // Other user data you want to store
+        };
     } catch (error) {
         res.status(500).send({ success: false, error: error.message });
     }
+    
 });
 
 module.exports = router;

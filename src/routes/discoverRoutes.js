@@ -1,6 +1,8 @@
 const express = require('express');
 const axios = require('axios');
+const { isAuthenticated } = require('../middleware/authMiddleware'); 
 const router = express.Router();
+
 
 router.post('/discover', async (req, res) => {
     const { query } = req.body;

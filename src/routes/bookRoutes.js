@@ -1,8 +1,11 @@
-const { createBook, getBook } = require('../services/bookServices');
 const express = require('express');
+const { createBook, getBook } = require('../services/bookServices');
 const router = express.Router();
+const  isAuthenticated  = require('../middleware/authMiddleware'); 
 
-router.post('/createBook', async (req, res) => {
+
+
+router.post('/createBook',  async (req, res) => {
     const { bookName, bookPreviewPicture, bookDescription, bookAuthors, numberOfPages, estimatedReadTime, publisher, bookLink } = req.body;
     try {
         await createBook(bookName, bookPreviewPicture, bookDescription, bookAuthors, numberOfPages, estimatedReadTime, publisher, bookLink);
@@ -12,7 +15,7 @@ router.post('/createBook', async (req, res) => {
     }
 });
 
-router.get('/getBook/:bookId', async (req, res) => {
+router.get('/getBook/:bookId',  async (req, res) => {
     const { bookId } = req.params;
     try {
         const book = await getBook(bookId);

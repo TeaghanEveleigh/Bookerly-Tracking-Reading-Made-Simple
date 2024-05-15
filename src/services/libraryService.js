@@ -3,7 +3,7 @@ const pool = require('../config/db');
 const getUserLibraries = async (userId) => {
     try {
         const query = {
-            text: 'SELECT * FROM libraries WHERE user_id = $1',
+            text: 'SELECT * FROM libraries WHERE email = $1',
             values: [userId],
         };
         const result = await pool.query(query);

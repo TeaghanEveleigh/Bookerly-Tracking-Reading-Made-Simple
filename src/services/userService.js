@@ -2,6 +2,8 @@ const { system } = require('nodemon/lib/config');
 const pool = require('../config/db');
 const { hashPassword, comparePasswords } = require('./securePassword');
 
+
+
 const checkEmailExists = async (email) => {
     const query = {
         text: 'SELECT * FROM users WHERE email = $1',
@@ -59,6 +61,16 @@ const toggleDarkmode = async (email ) => {
         console.log(error);
     }
 };
+ const getDarkMode = async (email) => {
+    try {
+        const query = {text: "SELECT dark_mode FROM users WHERE email=$1", values: email}
+        const result = await pool.query (query);
+        return result.rows[0].dark_mode;
+    }
+    catch (error) {
+        console.log(error);
+    }
+}
 
 
 
@@ -68,5 +80,6 @@ module.exports = {
     checkEmailExists,
     checkPasswordCorrect,
     createUser,
-    toggleDarkmode
+    toggleDarkmode,
+    getDarkMode
 };

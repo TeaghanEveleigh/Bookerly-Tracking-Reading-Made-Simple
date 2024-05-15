@@ -9,6 +9,7 @@ const discoverRoutes = require('./src/routes/discoverRoutes');
 const pool = require("./src/config/db.js");
 const  createTables  = require("./src/config/createTables.js");
 const { options } = require("nodemon/lib/config/index.js");
+
 const cors = require('cors');
 //10 seconds in milliseconds
 const maxAge = 10 * 1000;
@@ -21,7 +22,11 @@ app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   next();
 });
-  
+app.use(session({
+    secret: 'secret-code',
+    resave: false,
+    saveUninitialized: false
+}));
 app.use(bodyParser.json());
 pool.connect((err) => {
     if (err) {
@@ -30,14 +35,19 @@ pool.connect((err) => {
         console.log('Connected to database');
     }
 });
-
+function isAuthenticated(req, res, next) {
+    if (req.session.user) {
+        return next();
+    }
+    res.status(401).json({ error: 'Unauthorized' ,session : req.session.user});   
+}
 // Configure express-session middleware
 
 
 app.use('/user', userRoutes);
-app.use('/book', bookRoutes);
-app.use('/library', libraryRoutes);
-app.use('/discover', discoverRoutes);
+app.use('/book', isAuthenticated, bookRoutes); // Apply isAuthenticated middleware here
+app.use('/library', isAuthenticated, libraryRoutes); // Apply isAuthenticated middleware here
+app.use('/discover', isAuthenticated, discoverRoutes);
 
 app.get('/',  (req, res) => {
     res.send('Hello World!');

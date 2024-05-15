@@ -1,8 +1,12 @@
-const { createUserLibrary, getUserLibraries, getLibraryBooks } = require('../services/libraryService');
 const express = require('express');
+const { createUserLibrary, getUserLibraries, getLibraryBooks } = require('../services/libraryService');
 const router = express.Router();
+const session = require('express-session');
+const { isAuthenticated } = require('../middleware/authMiddleware'); 
 
-router.post('/createLibrary', async (req, res) => {
+
+
+router.post('/createLibrary',   async (req, res) => {
     const { userId, libraryName } = req.body;
     try {
         await createUserLibrary(userId, libraryName);
@@ -12,8 +16,8 @@ router.post('/createLibrary', async (req, res) => {
     }
 });
 
-router.get('/userLibraries/:userId', async (req, res) => {
-    const { userId } = req.params;
+router.get('/userLibraries',  async (req, res) => {
+    const { userId } = req.session.user.username;
     try {
         const libraries = await getUserLibraries(userId);
         res.send({ success: true, libraries });
@@ -22,9 +26,19 @@ router.get('/userLibraries/:userId', async (req, res) => {
     }
 });
 
-router.get('/libraryBooks/:libraryId', async (req, res) => {
+router.get('/libraryBooks/:libraryId',   async (req, res) => {
     const { libraryId } = req.params;
     const { pageNumber = 1, limit = 10 } = req.query;
+    try {
+        const books = await getLibraryBooks(libraryId, Number(pageNumber), Number(limit));
+        res.send({ success: true, books });
+    } catch (error) {
+        res.status(500).send({ success: false, error: error.message });
+    }
+});
+router.get('/getFirstFiveBooks/:libraryId',   async (req, res) => {
+    const { libraryId } = req.params;
+    const { pageNumber = 1, limit = 5 } = req.query;
     try {
         const books = await getLibraryBooks(libraryId, Number(pageNumber), Number(limit));
         res.send({ success: true, books });
