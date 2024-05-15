@@ -33,7 +33,6 @@ router.post('/login', async (req, res) => {
         res.send({ success: true });
         req.session.user = {
             username: req.body.username,
-            isAuthenticated : true
             // darkmode : getDarkMode(req.body.email)
             // Other user data you want to store
         };
@@ -64,6 +63,34 @@ router.post('/signup', async (req, res) => {
         res.status(500).send({ success: false, error: error.message });
     }
     
+});
+router.post('/toggleDarkmode', async (req, res) => {
+    const email = req.body.email;
+    try {
+        await toggleDarkmode(email);
+        res.send({ success: true });
+    } catch (error) {
+        res.status(500).send({ success: false, error: error.message });
+    }
+});
+router.get('/getDarkMode', async (req, res) => {
+    const email = req.body.email;
+    try {
+        const darkmode = await getDarkMode(email);
+        res.send({ success: true, darkmode });
+    } catch (error) {
+        res.status(500).send({ success: false, error: error.message });
+    }
+});
+router.get('/logout', async (req, res) => {
+try {
+    req.session.destroy();
+    res.send({ success: true });
+} catch (error) {
+     
+    res.status(500).send({ success: false, error: error.message });
+}
+   
 });
 
 module.exports = router;
