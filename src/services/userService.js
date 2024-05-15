@@ -3,7 +3,19 @@ const pool = require('../config/db');
 const { hashPassword, comparePasswords } = require('./securePassword');
 
 
-
+const getUserID = async (email) => {
+    try {
+        const query = {
+            text: 'SELECT id FROM users WHERE email = $1',
+            values: [email],
+        };
+        const result = await pool.query
+        return result.rows[0].id;
+    } catch (error) {
+        console.error('An error occurred while getting user ID:', error);
+        throw error;
+    }
+}
 const checkEmailExists = async (email) => {
     const query = {
         text: 'SELECT * FROM users WHERE email = $1',
@@ -81,5 +93,6 @@ module.exports = {
     checkPasswordCorrect,
     createUser,
     toggleDarkmode,
-    getDarkMode
+    getDarkMode, 
+    getUserID
 };

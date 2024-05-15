@@ -1,5 +1,5 @@
 const express = require('express');
-const { checkEmailExists, checkPasswordCorrect, createUser, createUserLibrary , getDarkMode } = require('../services/userService');
+const { checkEmailExists, checkPasswordCorrect, createUser, createUserLibrary , getDarkMode , getUserID} = require('../services/userService');
 const { isAuthenticated } = require('../middleware/authMiddleware'); 
 const router = express.Router();
 
@@ -56,7 +56,8 @@ router.post('/signup', async (req, res) => {
         res.send({ success: true });
         req.session.user = {
             username: req.body.username,
-            darkmode : getDarkMode(req.body.email)
+            darkmode : getDarkMode(req.body.email), 
+            userId : getUserID(req.body.email)
             // Other user data you want to store
         };
     } catch (error) {

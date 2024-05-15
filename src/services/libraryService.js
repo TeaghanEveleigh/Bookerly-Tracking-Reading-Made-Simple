@@ -1,10 +1,10 @@
 const pool = require('../config/db');
 
-const getUserLibraries = async (userId) => {
+const getUserLibraries = async (username) => {
     try {
         const query = {
             text: 'SELECT * FROM libraries WHERE email = $1',
-            values: [userId],
+            values: [username],
         };
         const result = await pool.query(query);
         return result.rows;
@@ -28,11 +28,11 @@ const getLibraryBooks = async (libraryId, pageNumber, limit) => {
     }
 }
 
-const createUserLibrary = async (userId, libraryName) => {
+const createUserLibrary = async (username, libraryName) => {
     try {
         const query = {
             text: 'INSERT INTO libraries (user_id, library_name) VALUES ($1, $2)',
-            values: [userId, libraryName],
+            values: [user_id, libraryName],
         };
         await pool.query(query);
     } catch (error) {
