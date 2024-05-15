@@ -17,9 +17,9 @@ router.post('/createLibrary',   async (req, res) => {
 });
 
 router.get('/userLibraries',  async (req, res) => {
-    const { username } = req.session.user.username;
+    const { userId } = req.session.user.userId;
     try {
-        const libraries = await getUserLibraries(username);
+        const libraries = await getUserLibraries(userId);
         res.send({ success: true, libraries });
     } catch (error) {
         res.status(500).send({ success: false, error: error.message });
