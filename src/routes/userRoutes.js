@@ -29,7 +29,8 @@ router.post('/login', async (req, res) => {
             return res.send({ success: false, error: 'Incorrect password' });
         }
         req.session.user = {
-            username: req.body.username,
+            email: req.body.email,
+            userId : getUserID(req.body.email)
             // darkmode : getDarkMode(req.body.email)
             // Other user data you want to store
         };
@@ -55,8 +56,7 @@ router.post('/signup', async (req, res) => {
 
         res.send({ success: true });
         req.session.user = {
-            username: req.body.username,
-            darkmode : getDarkMode(req.body.email), 
+            email: req.body.email,
             userId : getUserID(req.body.email)
             // Other user data you want to store
         };
