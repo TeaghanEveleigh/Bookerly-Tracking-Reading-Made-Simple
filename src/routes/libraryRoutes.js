@@ -17,13 +17,14 @@ router.post('/createLibrary',   async (req, res) => {
 });
 
 router.get('/userLibraries',  async (req, res) => {
-    const { userId } = req.session.user.username;
-    try {
-        const libraries = await getUserLibraries(userId);
-        res.send({ success: true, libraries });
-    } catch (error) {
-        res.status(500).send({ success: false, error: error.message });
-    }
+    // const { userId } = req.session.user.username;
+    // try {
+    //     const libraries = await getUserLibraries(userId);
+    //     res.send({ success: true, libraries });
+    // } catch (error) {
+    //     res.status(500).send({ success: false, error: error.message });
+    // }
+    res.send({ success: true});
 });
 
 router.get('/libraryBooks/:libraryId',   async (req, res) => {

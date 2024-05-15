@@ -28,14 +28,14 @@ router.post('/login', async (req, res) => {
         if (!passwordCorrect) {
             return res.send({ success: false, error: 'Incorrect password' });
         }
-
-
-        res.send({ success: true });
         req.session.user = {
             username: req.body.username,
             // darkmode : getDarkMode(req.body.email)
             // Other user data you want to store
         };
+
+        res.send({ success: true });
+        
     } catch (error) {
         res.status(500).send({ success: false, error: error.message });
     }
