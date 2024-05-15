@@ -4,7 +4,7 @@ const getUserLibraries = async (userId) => {
     try {
         const query = {
             text: 'SELECT * FROM libraries WHERE user_id = $1',
-            values: [10],
+            values: [userId],
         };
         const result = await pool.query(query);
         return result.rows;
