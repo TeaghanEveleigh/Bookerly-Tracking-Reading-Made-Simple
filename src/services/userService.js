@@ -11,7 +11,7 @@ const getUserID = async (email) => {
         };
         const result = await pool.query(query);
         if (result.rows.length > 0) {
-            return result.rows[0].id;
+            return result.rows[0];
         } else {
             return null; // or handle the case when no user is found
         }
