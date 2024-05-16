@@ -9,8 +9,7 @@ const discoverRoutes = require('./src/routes/discoverRoutes');
 const pool = require("./src/config/db.js");
 const  createTables  = require("./src/config/createTables.js");
 const { options } = require("nodemon/lib/config/index.js");
-const frontendDomain = 'localhost'; 
-const frontendPort = 3000;
+
 const cors = require('cors');
 //10 seconds in milliseconds
 const maxAge = 10 * 1000;
@@ -18,29 +17,16 @@ const allowedOrigins = ['http://localhost:3000', 'https://teaghaneveleigh.github
 // Setup express app
 const app = express();
 app.use(cors({
-    origin: ['http://localhost:3000', 'https://teaghaneveleigh.github.io'], // Your frontend origin(s)
+    origin: allowedOrigins,
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials: true,
-    allowedOrigins: ['http://localhost:3000', 'https://teaghaneveleigh.github.io'],
-    preflightContinue: false,
-    optionsSuccessStatus: 204,
-    maxAge: 86400, // 1 day
-    // Set domain explicitly to match your frontend
+    credentials: true,  // Important for sending cookies
 }));
-
 
 app.use(session({
     secret: 'secret-code',
     resave: false,
-    saveUninitialized: true,
-    cookie: {
-        httpOnly: true,   // Prevent client-side access
-        secure: process.env.NODE_ENV === 'production', // Secure in production
-        //sameSite: 'strict',  // Comment this out for now for testing purposes.
-        maxAge: 1000 * 60 * 60 * 24, // 1 day (adjust as needed)
-    //  Set domain explicitly to match your frontend
-    },
+    saveUninitialized: false
 }));
 app.use(bodyParser.json());
 pool.connect((err) => {
