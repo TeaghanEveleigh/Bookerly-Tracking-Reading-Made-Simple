@@ -42,26 +42,18 @@ pool.connect((err) => {
 });
 function isAuthenticated(req, res, next) {
     console.log("=== isAuthenticated Middleware ===");
-
-    console.log("Request Headers:", req.headers); // Log all headers to see if the cookie is there
+    console.log("Request Headers:", req.headers); // Log all headers for debugging
     console.log("Cookies:", req.cookies);       // Log the parsed cookies object
   
-    const sessionCookie = req.cookies;  // Assuming your session cookie is named 'session'
+    const sessionCookie = req.cookies['connect.sid']; // Use bracket notation for the dot in the name
   
-    console.log("COOOOOOOKIES", sessionCookie); // Log the session cookie value
+    console.log("Session Cookie (connect.sid):", sessionCookie); 
   
-    if (sessionCookie) {
-      console.log("Session ID from Cookie:", sessionCookie);
-      console.log("Session ID from Server:", req.sessionID);
-  
-      if (req.sessionID === sessionCookie) {
-        console.log("Authentication Successful");
-        return next(); // Proceed to the next middleware/route handler
-      } else {
-        console.log("Session IDs Don't Match!");
-      }
+    if (sessionCookie && req.sessionID === sessionCookie) {
+      console.log("Authentication Successful");
+      return next(); 
     } else {
-      console.log("No Session Cookie Found");
+      console.log("Session IDs Don't Match!"); 
     }
   
     console.log("Authentication Failed");
