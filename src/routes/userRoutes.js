@@ -86,6 +86,7 @@ router.get('/getDarkMode', async (req, res) => {
 });
 router.get('/logout', async (req, res) => {
 try {
+    
     req.session.destroy();
     res.send({ success: true });
 } catch (error) {
