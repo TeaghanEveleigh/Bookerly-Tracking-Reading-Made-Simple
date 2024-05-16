@@ -18,11 +18,12 @@ const allowedOrigins = ['http://localhost:3000', 'https://teaghaneveleigh.github
 // Setup express app
 const app = express();
 app.use(cors({
-    origin: allowedOrigins,
+    origin: ['http://localhost:3000', 'https://teaghaneveleigh.github.io'], // Your frontend origin(s)
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials: true,  // Important for sending cookies
+    credentials: true,  // If you're using cookies for authentication
 }));
+
 
 app.use(session({
     secret: 'secret-code',
