@@ -2,7 +2,6 @@ const express = require("express");
 const axios = require("axios");
 const bodyParser = require("body-parser");
 const session = require("express-session");
-const cookieParser = require('cookie-parser');
 const userRoutes = require('./src/routes/userRoutes');
 const bookRoutes = require('./src/routes/bookRoutes');
 const libraryRoutes = require('./src/routes/libraryRoutes');
@@ -11,14 +10,12 @@ const pool = require("./src/config/db.js");
 const  createTables  = require("./src/config/createTables.js");
 const { options } = require("nodemon/lib/config/index.js");
 
-
 const cors = require('cors');
 //10 seconds in milliseconds
 const maxAge = 10 * 1000;
 const allowedOrigins = ['http://localhost:3000', 'https://teaghaneveleigh.github.io'];
 // Setup express app
 const app = express();
-app.use(cookieParser());
 app.use((req, res, next) => {
     const origin = req.headers.origin;
   res.setHeader('Access-Control-Allow-Origin', allowedOrigins.includes(origin) ? origin : '');
@@ -41,25 +38,11 @@ pool.connect((err) => {
     }
 });
 function isAuthenticated(req, res, next) {
-    console.log("=== isAuthenticated Middleware ===");
-    console.log("Request Headers:", req.headers); // Log all headers for debugging
-    console.log("Cookies:", req.cookies);
-    console.log("session ID " ,req.sessionID )       // Log the parsed cookies object
-  
-    const sessionCookie = req.cookies['connect.sid']; // Use bracket notation for the dot in the name
-  
-    console.log("Session Cookie (connect.sid):", sessionCookie); 
-  
-    if (sessionCookie && req.sessionID === sessionCookie) {
-      console.log("Authentication Successful");
-      return next(); 
-    } else {
-      console.log("Session IDs Don't Match!"); 
+    if (req.session.user) {
+        return next();
     }
-  
-    console.log("Authentication Failed");
     res.status(401).json({ error: 'Unauthorized' });
-  }
+}
 // Configure express-session middleware
 
 
