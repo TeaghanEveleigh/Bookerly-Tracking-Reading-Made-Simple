@@ -2,6 +2,7 @@ const express = require("express");
 const axios = require("axios");
 const bodyParser = require("body-parser");
 const session = require("express-session");
+const cookieParser = require('cookie-parser');
 const userRoutes = require('./src/routes/userRoutes');
 const bookRoutes = require('./src/routes/bookRoutes');
 const libraryRoutes = require('./src/routes/libraryRoutes');
@@ -10,6 +11,7 @@ const pool = require("./src/config/db.js");
 const  createTables  = require("./src/config/createTables.js");
 const { options } = require("nodemon/lib/config/index.js");
 
+app.use(cookieParser());
 const cors = require('cors');
 //10 seconds in milliseconds
 const maxAge = 10 * 1000;
@@ -38,12 +40,31 @@ pool.connect((err) => {
     }
 });
 function isAuthenticated(req, res, next) {
-    res.send({ req: req});
-    if (req.session.user) {
-        return next();
+    console.log("=== isAuthenticated Middleware ===");
+    console.log("Request Headers:", req.headers); // Log all headers to see if the cookie is there
+    console.log("Cookies:", req.cookies);       // Log the parsed cookies object
+  
+    const sessionCookie = req.cookies.session;  // Assuming your session cookie is named 'session'
+  
+    console.log("Session Cookie:", sessionCookie); // Log the session cookie value
+  
+    if (sessionCookie) {
+      console.log("Session ID from Cookie:", sessionCookie);
+      console.log("Session ID from Server:", req.sessionID);
+  
+      if (req.sessionID === sessionCookie) {
+        console.log("Authentication Successful");
+        return next(); // Proceed to the next middleware/route handler
+      } else {
+        console.log("Session IDs Don't Match!");
+      }
+    } else {
+      console.log("No Session Cookie Found");
     }
+  
+    console.log("Authentication Failed");
     res.status(401).json({ error: 'Unauthorized' });
-}
+  }
 // Configure express-session middleware
 
 
