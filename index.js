@@ -16,14 +16,13 @@ const maxAge = 10 * 1000;
 const allowedOrigins = ['http://localhost:3000', 'https://teaghaneveleigh.github.io'];
 // Setup express app
 const app = express();
-app.use((req, res, next) => {
-    const origin = req.headers.origin;
-  res.setHeader('Access-Control-Allow-Origin', allowedOrigins.includes(origin) ? origin : '');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  res.setHeader('Access-Control-Allow-Credentials', 'true');
-  next();
-});
+app.use(cors({
+    origin: allowedOrigins,
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true,  // Important for sending cookies
+}));
+
 app.use(session({
     secret: 'secret-code',
     resave: false,
@@ -47,9 +46,9 @@ function isAuthenticated(req, res, next) {
 
 
 app.use('/user', userRoutes);
-app.use('/book', isAuthenticated, bookRoutes); // Apply isAuthenticated middleware here
-app.use('/library', isAuthenticated, libraryRoutes); // Apply isAuthenticated middleware here
-app.use('/discover', isAuthenticated, discoverRoutes);
+app.use('/book', bookRoutes); // Apply isAuthenticated middleware here
+app.use('/library', libraryRoutes); // Apply isAuthenticated middleware here
+app.use('/discover', discoverRoutes);
 
 app.get('/',  (req, res) => {
     res.send('Hello World!');
