@@ -21,7 +21,12 @@ app.use(cors({
     origin: ['http://localhost:3000', 'https://teaghaneveleigh.github.io'], // Your frontend origin(s)
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials: true,  // If you're using cookies for authentication
+    credentials: true,
+    allowedOrigins: ['http://localhost:3000', 'https://teaghaneveleigh.github.io'],
+    preflightContinue: false,
+    optionsSuccessStatus: 204,
+    maxAge: 86400, // 1 day
+    // Set domain explicitly to match your frontend
 }));
 
 
