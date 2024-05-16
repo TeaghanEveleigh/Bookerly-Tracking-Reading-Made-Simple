@@ -42,13 +42,13 @@ pool.connect((err) => {
 });
 function isAuthenticated(req, res, next) {
     console.log("=== isAuthenticated Middleware ===");
-    console.log("Request request:", req); // Log the request method
+
     console.log("Request Headers:", req.headers); // Log all headers to see if the cookie is there
     console.log("Cookies:", req.cookies);       // Log the parsed cookies object
   
-    const sessionCookie = req.cookies.session;  // Assuming your session cookie is named 'session'
+    const sessionCookie = req.cookies;  // Assuming your session cookie is named 'session'
   
-    console.log("Session Cookie:", sessionCookie); // Log the session cookie value
+    console.log("COOOOOOOKIES", sessionCookie); // Log the session cookie value
   
     if (sessionCookie) {
       console.log("Session ID from Cookie:", sessionCookie);
