@@ -34,7 +34,7 @@ app.use(session({
         secure: process.env.NODE_ENV === 'production', // Secure in production
         //sameSite: 'strict',  // Comment this out for now for testing purposes.
         maxAge: 1000 * 60 * 60 * 24, // 1 day (adjust as needed)
-        domain: frontendDomain //  Set domain explicitly to match your frontend
+    //  Set domain explicitly to match your frontend
     },
 }));
 app.use(bodyParser.json());
