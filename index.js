@@ -43,7 +43,8 @@ pool.connect((err) => {
 function isAuthenticated(req, res, next) {
     console.log("=== isAuthenticated Middleware ===");
     console.log("Request Headers:", req.headers); // Log all headers for debugging
-    console.log("Cookies:", req.cookies);       // Log the parsed cookies object
+    console.log("Cookies:", req.cookies);
+    console.log("session ID " ,req.sessionID )       // Log the parsed cookies object
   
     const sessionCookie = req.cookies['connect.sid']; // Use bracket notation for the dot in the name
   
