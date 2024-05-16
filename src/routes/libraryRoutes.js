@@ -21,7 +21,7 @@ router.get('/userLibraries',  async (req, res) => {
     const { userId } = req.session.user.userId;
     try {
         const libraries = await getUserLibraries(userId);
-        res.send({ success: true, libraries , userId : userId});
+        res.send({ success: true, libraries  : libraries , userId : userId});
     } catch (error) {
         res.status(500).send({ success: false, error: error.message });
     }
