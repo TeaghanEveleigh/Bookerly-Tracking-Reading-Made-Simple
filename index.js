@@ -9,7 +9,8 @@ const discoverRoutes = require('./src/routes/discoverRoutes');
 const pool = require("./src/config/db.js");
 const  createTables  = require("./src/config/createTables.js");
 const { options } = require("nodemon/lib/config/index.js");
-
+const frontendDomain = 'localhost'; 
+const frontendPort = 3000;
 const cors = require('cors');
 //10 seconds in milliseconds
 const maxAge = 10 * 1000;
@@ -26,7 +27,14 @@ app.use(cors({
 app.use(session({
     secret: 'secret-code',
     resave: false,
-    saveUninitialized: true
+    saveUninitialized: true,
+    cookie: {
+        httpOnly: true,   // Prevent client-side access
+        secure: process.env.NODE_ENV === 'production', // Secure in production
+        //sameSite: 'strict',  // Comment this out for now for testing purposes.
+        maxAge: 1000 * 60 * 60 * 24, // 1 day (adjust as needed)
+        domain: frontendDomain //  Set domain explicitly to match your frontend
+    },
 }));
 app.use(bodyParser.json());
 pool.connect((err) => {
