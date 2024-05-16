@@ -38,6 +38,7 @@ pool.connect((err) => {
     }
 });
 function isAuthenticated(req, res, next) {
+    res.send({ req: req});
     if (req.session.user) {
         return next();
     }
