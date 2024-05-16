@@ -11,13 +11,14 @@ const pool = require("./src/config/db.js");
 const  createTables  = require("./src/config/createTables.js");
 const { options } = require("nodemon/lib/config/index.js");
 
-app.use(cookieParser());
+
 const cors = require('cors');
 //10 seconds in milliseconds
 const maxAge = 10 * 1000;
 const allowedOrigins = ['http://localhost:3000', 'https://teaghaneveleigh.github.io'];
 // Setup express app
 const app = express();
+app.use(cookieParser());
 app.use((req, res, next) => {
     const origin = req.headers.origin;
   res.setHeader('Access-Control-Allow-Origin', allowedOrigins.includes(origin) ? origin : '');
