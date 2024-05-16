@@ -8,6 +8,7 @@ const { isAuthenticated } = require('../middleware/authMiddleware');
 
 router.post('/createLibrary',   async (req, res) => {
     const { libraryName } = req.body;
+    const userId = req.session.user.userId;
     try {
         await createUserLibrary(userId, libraryName);
         res.send({ success: true });

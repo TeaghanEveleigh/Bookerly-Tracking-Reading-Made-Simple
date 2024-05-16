@@ -25,7 +25,7 @@ app.use((req, res, next) => {
 app.use(session({
     secret: 'secret-code',
     resave: false,
-    saveUninitialized: false
+    saveUninitialized: true
 }));
 app.use(bodyParser.json());
 pool.connect((err) => {
