@@ -26,7 +26,7 @@ app.use(cors({
 app.use(session({
     secret: 'secret-code',
     resave: false,
-    saveUninitialized: false
+    saveUninitialized: true
 }));
 app.use(bodyParser.json());
 pool.connect((err) => {
@@ -46,9 +46,9 @@ function isAuthenticated(req, res, next) {
 
 
 app.use('/user', userRoutes);
-app.use('/book', bookRoutes); // Apply isAuthenticated middleware here
-app.use('/library', libraryRoutes); // Apply isAuthenticated middleware here
-app.use('/discover', discoverRoutes);
+app.use('/book', isAuthenticated, bookRoutes); // Apply isAuthenticated middleware here
+app.use('/library', isAuthenticated, libraryRoutes); // Apply isAuthenticated middleware here
+app.use('/discover', isAuthenticated, discoverRoutes);
 
 app.get('/',  (req, res) => {
     res.send('Hello World!');
