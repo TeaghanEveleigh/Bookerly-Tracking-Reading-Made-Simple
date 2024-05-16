@@ -35,7 +35,7 @@ router.post('/login', async (req, res) => {
             // Other user data you want to store
         };
 
-        res.send({ success: true , id : getUserID(req.body.email) });
+        res.send({ success: true , id : getUserID(req.body.email) , email : req.body.email});
         
     } catch (error) {
         res.status(500).send({ success: false, error: error.message });
