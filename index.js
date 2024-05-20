@@ -24,10 +24,17 @@ app.use(cors({
 }));
 
 app.use(session({
-    secret: 'secret-code',
+    secret: 'your-secret-key',
     resave: false,
-    saveUninitialized: true
+    saveUninitialized: false,
+    cookie: {
+        secure: process.env.NODE_ENV === 'production', // Only set to true if using https
+        httpOnly: true,
+        maxAge: 1000 * 60 * 60 * 24, // 1 day
+        sameSite: 'none' // Set SameSite attribute to 'none' for cross-origin requests
+    },
 }));
+
 app.use(bodyParser.json());
 pool.connect((err) => {
     if (err) {
@@ -45,10 +52,10 @@ function isAuthenticated(req, res, next) {
 // Configure express-session middleware
 
 
-app.use('/user', userRoutes);
-app.use('/book', bookRoutes); // Apply isAuthenticated middleware here
-app.use('/library', libraryRoutes); // Apply isAuthenticated middleware here
-app.use('/discover', discoverRoutes);
+app.use('/user',  userRoutes);
+app.use('/book', isAuthenticated,bookRoutes); // Apply isAuthenticated middleware here
+app.use('/library',isAuthenticated, libraryRoutes); // Apply isAuthenticated middleware here
+app.use('/discover',isAuthenticated, discoverRoutes);
 
 app.get('/',  (req, res) => {
     res.send('Hello World!');
