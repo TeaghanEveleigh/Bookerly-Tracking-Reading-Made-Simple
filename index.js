@@ -25,9 +25,15 @@ app.use((req, res, next) => {
   next();
 });
 app.use(session({
-    secret: 'secret-code',
+    secret: 'your-secret-key',
     resave: false,
-    saveUninitialized: true
+    saveUninitialized: false,
+    cookie: {
+        secure: false, 
+        httpOnly: true,
+        maxAge: 1000 * 60 * 60 * 24, 
+        sameSite: 'lax', 
+    },
 }));
 app.use(bodyParser.json());
 pool.connect((err) => {
@@ -43,12 +49,12 @@ function isAuthenticated(req, res, next) {
     }
     res.status(401).json({ error: 'Unauthorized' });
 }
-// Configure express-session middleware
+
 
 
 app.use('/user', userRoutes);
-app.use('/book', isAuthenticated, bookRoutes); // Apply isAuthenticated middleware here
-app.use('/library', isAuthenticated, libraryRoutes); // Apply isAuthenticated middleware here
+app.use('/book', isAuthenticated, bookRoutes); 
+app.use('/library', isAuthenticated, libraryRoutes); 
 app.use('/discover', isAuthenticated, discoverRoutes);
 
 app.get('/',  (req, res) => {
@@ -58,7 +64,7 @@ app.use((req, res) => {
     res.status(404).send('404 - Not Found');
 });
 
-const PORT = process.env.PORT || 3001; // Use the provided port by Heroku or default to 3001
+const PORT = process.env.PORT || 3001; 
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
