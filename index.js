@@ -1,41 +1,46 @@
 const express = require("express");
-const axios = require("axios");
-const bodyParser = require("body-parser");
 const session = require("express-session");
-const userRoutes = require('./src/routes/userRoutes');
-const bookRoutes = require('./src/routes/bookRoutes');
-const libraryRoutes = require('./src/routes/libraryRoutes');
-const discoverRoutes = require('./src/routes/discoverRoutes');
+const cors = require("cors");
+const userRoutes = require("./src/routes/userRoutes");
+const bookRoutes = require("./src/routes/bookRoutes");
+const libraryRoutes = require("./src/routes/libraryRoutes");
+const discoverRoutes = require("./src/routes/discoverRoutes");
 const pool = require("./src/config/db.js");
-const  createTables  = require("./src/config/createTables.js");
-const { options } = require("nodemon/lib/config/index.js");
 
-const cors = require('cors');
-//10 seconds in milliseconds
-const maxAge = 10 * 1000;
-const allowedOrigins = ['http://localhost:3000', 'https://teaghaneveleigh.github.io'];
-// Setup express app
 const app = express();
-app.use((req, res, next) => {
-    const origin = req.headers.origin;
-  res.setHeader('Access-Control-Allow-Origin', allowedOrigins.includes(origin) ? origin : '');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  res.setHeader('Access-Control-Allow-Credentials', 'true');
-  next();
-});
+
+const allowedOrigins = ['http://localhost:3000', 'https://teaghaneveleigh.github.io'];
+
+app.use(cors({
+    origin: function (origin, callback) {
+        if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true,
+}));
+
+// Handle preflight requests
+app.options('*', cors());
+
 app.use(session({
     secret: 'your-secret-key',
     resave: false,
     saveUninitialized: false,
     cookie: {
-        secure: false, 
+        secure: false, // Set to true if using HTTPS
         httpOnly: true,
-        maxAge: 1000 * 60 * 60 * 24, 
-        sameSite: 'lax', 
+        maxAge: 1000 * 60 * 60 * 24, // 1 day
+        sameSite: 'none', // For cross-origin requests
     },
 }));
-app.use(bodyParser.json());
+
+app.use(express.json());
+
 pool.connect((err) => {
     if (err) {
         console.error('Failed to connect to database:', err);
@@ -43,29 +48,29 @@ pool.connect((err) => {
         console.log('Connected to database');
     }
 });
+
 function isAuthenticated(req, res, next) {
-    if (req.session.user) {
+    if (req.session && req.session.user) {
         return next();
+    } else {
+        res.status(401).json({ error: 'Unauthorized' });
     }
-    res.status(401).json({ error: 'Unauthorized' });
 }
 
-
-
 app.use('/user', userRoutes);
-app.use('/book', isAuthenticated, bookRoutes); 
-app.use('/library', isAuthenticated, libraryRoutes); 
+app.use('/book', isAuthenticated, bookRoutes);
+app.use('/library', isAuthenticated, libraryRoutes);
 app.use('/discover', isAuthenticated, discoverRoutes);
 
-app.get('/',  (req, res) => {
+app.get('/', (req, res) => {
     res.send('Hello World!');
 });
+
 app.use((req, res) => {
     res.status(404).send('404 - Not Found');
 });
 
-const PORT = process.env.PORT || 3001; 
-
+const PORT = 3001;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
