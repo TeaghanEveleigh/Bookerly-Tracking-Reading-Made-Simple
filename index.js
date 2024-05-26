@@ -44,11 +44,13 @@ pool.connect((err) => {
     }
 });
 function isAuthenticated(req, res, next) {
-    if (req.session.user) {
+    if (req.session && req.session.user) {
         return next();
+    } else {
+        res.status(401).json({ error: 'Unauthorized' });
     }
-    res.status(401).json({ error: 'Unauthorized' });
 }
+
 // Configure express-session middleware
 
 
