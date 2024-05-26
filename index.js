@@ -9,7 +9,7 @@ const pool = require("./src/config/db.js");
 
 const app = express();
 
-const allowedOrigins = ['http://localhost:3000', 'https://teaghaneveleigh.github.io'];
+const allowedOrigins = ['http://localhost:3000', 'https://teaghaneveleigh.github.io' , 'https://main--elegant-griffin-6e8516.netlify.app'];
 
 app.use(cors({
     origin: function (origin, callback) {
