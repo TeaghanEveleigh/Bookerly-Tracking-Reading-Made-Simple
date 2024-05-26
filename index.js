@@ -1,73 +1,65 @@
-const express = require("express");
-const axios = require("axios");
-const bodyParser = require("body-parser");
-const session = require("express-session");
-const userRoutes = require('./src/routes/userRoutes');
-const bookRoutes = require('./src/routes/bookRoutes');
-const libraryRoutes = require('./src/routes/libraryRoutes');
-const discoverRoutes = require('./src/routes/discoverRoutes');
-const pool = require("./src/config/db.js");
-const  createTables  = require("./src/config/createTables.js");
-const { options } = require("nodemon/lib/config/index.js");
+const express = require('express');
+const router = express.Router();
+const { checkEmailExists, checkPasswordCorrect, createUser, getUserID, getDarkMode, toggleDarkmode } = require('../services/userService');
 
-const cors = require('cors');
-//10 seconds in milliseconds
-const maxAge = 10 * 1000;
-const allowedOrigins = ['http://localhost:3000', 'https://teaghaneveleigh.github.io'];
-// Setup express app
-const app = express();
-app.use(cors({
-    origin: allowedOrigins,
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials: true,  // Important for sending cookies
+router.post('/checkEmailExists', asyncHandler(async (req, res) => {
+    const email = req.body.email;
+    const emailExists = await checkEmailExists(email);
+    res.send({ emailExists });
 }));
 
-app.use(session({
-    secret: 'your-secret-key',
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-        secure: process.env.NODE_ENV === 'production', // Only set to true if using https
-        httpOnly: true,
-        maxAge: 1000 * 60 * 60 * 24, // 1 day
-        sameSite: 'none' // Set SameSite attribute to 'none' for cross-origin requests
-    },
+router.post('/checkPasswordCorrect', asyncHandler(async (req, res) => {
+    const email = req.body.email;
+    const password = req.body.password;
+    const passwordCorrect = await checkPasswordCorrect(email, password);
+    res.send({ passwordCorrect });
 }));
 
-app.use(bodyParser.json());
-pool.connect((err) => {
-    if (err) {
-        console.error('Failed to connect to database:', err);
-    } else {
-        console.log('Connected to database');
+router.post('/login', asyncHandler(async (req, res) => {
+    const { email, password } = req.body;
+    const emailExists = await checkEmailExists(email);
+    if (!emailExists) {
+        return res.status(400).json({ success: false, error: 'Email does not exist' });
     }
-});
-function isAuthenticated(req, res, next) {
-    if (req.session && req.session.user) {
-        return next();
-    } else {
-        res.status(401).json({ error: 'Unauthorized' });
+
+    const passwordCorrect = await checkPasswordCorrect(email, password);
+    if (!passwordCorrect) {
+        return res.status(400).json({ success: false, error: 'Incorrect password' });
     }
-}
 
-// Configure express-session middleware
+    const userId = await getUserID(email);
+    req.session.user = { email, userId };
+    res.json({ success: true, userId, email });
+}));
 
+router.post('/signup', asyncHandler(async (req, res) => {
+    const { email, password } = req.body;
+    const emailExists = await checkEmailExists(email);
+    if (emailExists) {
+        return res.status(400).json({ success: false, error: 'Email already in use' });
+    }
 
-app.use('/user',  userRoutes);
-app.use('/book', isAuthenticated,bookRoutes); // Apply isAuthenticated middleware here
-app.use('/library',isAuthenticated, libraryRoutes); // Apply isAuthenticated middleware here
-app.use('/discover',isAuthenticated, discoverRoutes);
+    await createUser(email, password);
+    const userId = await getUserID(email);
+    req.session.user = { email, userId };
+    res.json({ success: true });
+}));
 
-app.get('/',  (req, res) => {
-    res.send('Hello World!');
-});
-app.use((req, res) => {
-    res.status(404).send('404 - Not Found');
-});
+router.post('/toggleDarkmode', asyncHandler(async (req, res) => {
+    const email = req.body.email;
+    await toggleDarkmode(email);
+    res.json({ success: true });
+}));
 
-const PORT = process.env.PORT || 3001; // Use the provided port by Heroku or default to 3001
+router.get('/getDarkMode', asyncHandler(async (req, res) => {
+    const email = req.body.email;
+    const darkmode = await getDarkMode(email);
+    res.json({ success: true, darkmode });
+}));
 
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-});
+router.get('/logout', asyncHandler(async (req, res) => {
+    req.session.destroy();
+    res.json({ success: true });
+}));
+
+module.exports = router;
