@@ -2,7 +2,7 @@ const express = require('express');
 const { checkEmailExists, checkPasswordCorrect, createUser, createUserLibrary , getDarkMode , getUserID} = require('../services/userService');
 const { isAuthenticated } = require('../middleware/authMiddleware'); 
 const router = express.Router();
-
+const jwt = require('jsonwebtoken');
 
 router.post('/checkEmailExists',  async (req, res) => {
     const email = req.body.email;
@@ -29,14 +29,12 @@ router.post('/login', async (req, res) => {
             return res.send({ success: false, error: 'Incorrect password' });
         }
         const userId = await getUserID(email);
-        req.session.user = {
-            email: req.body.email,
-            userId : userId
-            // darkmode : getDarkMode(req.body.email)
-            // Other user data you want to store
-        };
+        const token = jwt.sign({
+            id : userId, 
+            email : email
 
-        res.send({ success: true , id : userId , email : req.body.email , session : req.session});
+        } ,"my key" , {expiresIn : '1d'});
+        res.send({ success: true, token: token });
         
     } catch (error) {
         res.status(500).send({ success: false, error: error.message });
