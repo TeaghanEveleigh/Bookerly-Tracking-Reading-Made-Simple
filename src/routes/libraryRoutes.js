@@ -8,7 +8,7 @@ const { isAuthenticated } = require('../middleware/authMiddleware');
 
 router.post('/createLibrary',   async (req, res) => {
     const { libraryName } = req.body;
-    const userId = req.session.user.userId;
+    const userId = req.user.id;
     try {
         await createUserLibrary(userId, libraryName);
         res.send({ success: true });
@@ -19,7 +19,7 @@ router.post('/createLibrary',   async (req, res) => {
 
 router.get('/userLibraries',  async (req, res) => {
 
-    const  userId  = req.session.user.userId;
+    const  userId  = req.user.userId;
     try {
         const libraries = await getUserLibraries(userId);
         res.send({ success: true, libraries  : libraries });
