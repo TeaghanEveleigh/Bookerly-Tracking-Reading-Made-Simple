@@ -50,21 +50,26 @@ pool.connect((err) => {
 });
 
 function isAuthenticated(req, res, next) {
-    const token = req.headers['authorization']?.split(' ')[1];
-    console.log("token on backend is" , token)
-    if(token) { 
-        jwt.verify(token , 'my key' , (err, decoded ) => { // Use jwt.verify
-            if(err){
-                return res.status(401).json({error: 'Unauthorized'});
-            }else{
-                req.user = decoded;
-                next();
-            }
-        });
-    } else{
-        res.status(401).json({error:'No token provided'})
-    }   
-}
+    const authHeader = req.headers['authorization'];
+    console.log("Authorization Header:", authHeader);
+  
+    const token = authHeader && authHeader.split(' ')[1];
+    console.log("Token on backend is:", token);
+  
+    if (token) {
+      jwt.verify(token, 'my key', (err, decoded) => {
+        if (err) {
+          return res.status(401).json({ error: 'Unauthorized' });
+        } else {
+          req.user = decoded;
+          next();
+        }
+      });
+    } else {
+      res.status(401).json({ error: 'No token provided' });
+    }
+  }
+  
 
 app.use('/user', userRoutes);
 app.use('/book', isAuthenticated, bookRoutes);
