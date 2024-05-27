@@ -32,7 +32,7 @@ app.use(session({
     resave: false,
     saveUninitialized: false,
     cookie: {
-        secure: false, // Set to true if using HTTPS
+        secure: true, // Set to true if using HTTPS
         httpOnly: true,
         maxAge: 1000 * 60 * 60 * 24, // 1 day
         sameSite: 'none', // For cross-origin requests
@@ -50,11 +50,20 @@ pool.connect((err) => {
 });
 
 function isAuthenticated(req, res, next) {
-    if (req.session && req.session.user) {
-        return next();
-    } else {
-        res.status(401).json({ error: 'Unauthorized' });
-    }
+    const token = req.headers['authorization']?.split(' ')[1];
+    console.log("token on backend is" , token)
+    if(token) { 
+        jwt.verify(token , 'my key' , (err, decoded ) => { // Use jwt.verify
+            if(err){
+                return res.status(401).json({error: 'Unauthorized'});
+            }else{
+                req.user = decoded;
+                next();
+            }
+        });
+    } else{
+        res.status(401).json({error:'No token provided'})
+    }   
 }
 
 app.use('/user', userRoutes);
