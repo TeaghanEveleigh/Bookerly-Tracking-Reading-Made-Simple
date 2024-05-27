@@ -5,6 +5,7 @@ const userRoutes = require("./src/routes/userRoutes");
 const bookRoutes = require("./src/routes/bookRoutes");
 const libraryRoutes = require("./src/routes/libraryRoutes");
 const discoverRoutes = require("./src/routes/discoverRoutes");
+const jwt = require("jsonwebtoken");
 const pool = require("./src/config/db.js");
 
 const app = express();
