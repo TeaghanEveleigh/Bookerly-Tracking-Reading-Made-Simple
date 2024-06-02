@@ -5,8 +5,10 @@ const userRoutes = require("./src/routes/userRoutes");
 const bookRoutes = require("./src/routes/bookRoutes");
 const libraryRoutes = require("./src/routes/libraryRoutes");
 const discoverRoutes = require("./src/routes/discoverRoutes");
+const createTables = require("./src/config/createTables");
 const jwt = require("jsonwebtoken");
 const pool = require("./src/config/db.js");
+
 
 const app = express();
 
@@ -47,6 +49,7 @@ pool.connect((err) => {
         console.error('Failed to connect to database:', err);
     } else {
         console.log('Connected to database');
+        createTables();
     }
 });
 
