@@ -49,7 +49,7 @@ pool.connect((err) => {
         console.error('Failed to connect to database:', err);
     } else {
         console.log('Connected to database');
-        createTables();
+        
     }
 });
 
