@@ -53,16 +53,17 @@ router.post('/signup', async (req, res) => {
 
         await createUser(email, password);
 
-        res.send({ success: true });
-        req.session.user = {
-            email: req.body.email,
-            userId : getUserID(req.body.email)
-            // Other user data you want to store
-        };
+        const userId = await getUserID(email);
+        const token = jwt.sign({
+            id: userId,
+            email: email
+        }, "my key", { expiresIn: '1d' });
+
+        res.send({ success: true, token: token });
+        
     } catch (error) {
         res.status(500).send({ success: false, error: error.message });
     }
-    
 });
 router.post('/toggleDarkmode', async (req, res) => {
     const email = req.body.email;
