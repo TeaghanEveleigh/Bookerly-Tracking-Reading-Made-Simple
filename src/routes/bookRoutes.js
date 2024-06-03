@@ -6,7 +6,7 @@ const  isAuthenticated  = require('../middleware/authMiddleware');
 
 
 router.post('/createBook',  async (req, res) => {
-    const { bookName, bookPreviewPicture, bookDescription, bookAuthors, numberOfPages, estimatedReadTime, publisher, bookLink } = req.body;
+    const { bookName, bookPreviewPicture, bookDescription, bookAuthors, numberOfPages, estimatedReadTime, publisher, bookLink , libraryId } = req.body;
     try {
         await createBook(bookName, bookPreviewPicture, bookDescription, bookAuthors, numberOfPages, estimatedReadTime, publisher, bookLink);
         res.send({ success: true });
