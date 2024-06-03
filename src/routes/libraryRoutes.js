@@ -32,7 +32,7 @@ router.get('/libraryBooks/:libraryId',   async (req, res) => {
     const { libraryId } = req.params;
     const { pageNumber = 1, limit = 10 } = req.query;
     try {
-        const books = await getLibraryBooks(libraryId, Number(pageNumber), Number(limit));
+        const books = await getLibraryBooks(libraryId);
         res.send({ success: true, books });
     } catch (error) {
         res.status(500).send({ success: false, error: error.message });
