@@ -14,11 +14,11 @@ const getUserLibraries = async (userId) => {
     }
 }
 
-const getLibraryBooks = async (libraryId, pageNumber, limit) => {
+const getLibraryBooks = async (libraryId) => {
     try {
         const query = {
-            text: 'SELECT * FROM books WHERE library_id = $1 LIMIT $2 OFFSET $3',
-            values: [libraryId, limit, (pageNumber - 1) * limit],
+            text: 'SELECT * FROM books WHERE library_id = $1 ',
+            values: [libraryId],
         };
         const result = await pool.query(query);
         return result.rows;
