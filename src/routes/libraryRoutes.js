@@ -13,7 +13,7 @@ router.post('/createLibrary',   async (req, res) => {
         await createUserLibrary(userId, libraryName);
         res.send({ success: true });
     } catch (error) {
-        res.status(500).send({ success: false, error: error.message });
+        res.status(500).send({ success: false, error: error.message , userId :"id was: " + userId});
     }
 });
 
