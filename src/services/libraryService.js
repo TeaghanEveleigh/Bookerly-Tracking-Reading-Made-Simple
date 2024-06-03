@@ -32,7 +32,7 @@ const createUserLibrary = async (username, libraryName) => {
     try {
         const query = {
             text: 'INSERT INTO libraries (user_id, library_name) VALUES ($1, $2)',
-            values: [user_id, libraryName],
+            values: [username, libraryName],
         };
         await pool.query(query);
     } catch (error) {
