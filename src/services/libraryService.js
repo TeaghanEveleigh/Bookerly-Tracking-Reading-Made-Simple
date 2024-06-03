@@ -40,9 +40,24 @@ const createUserLibrary = async (username, libraryName) => {
         throw error; // Rethrow the error to propagate it to the caller
     }
 }
+const getFirstFiveBooks = async (libraryId) => {
+    try {
+        const query = {
+            text: 'SELECT * FROM books WHERE library_id = $1 LIMIT 5',
+            values: [libraryId],
+        };
+        const result = await pool.query(query);
+        return result.rows;
+    } catch (error) {
+        console.error('Error in getFirstFiveBooks:', error);
+        throw error; // Rethrow the error to propagate it to the caller
+    }
+}
+
 module.exports = {
     createUserLibrary,
     getUserLibraries,
     getLibraryBooks,
+    getFirstFiveBooks
 
 };
