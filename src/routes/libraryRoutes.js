@@ -40,7 +40,7 @@ router.get('/libraryBooks/:libraryId',   async (req, res) => {
         res.status(500).send({ success: false, error: error.message });
     }
 });
-router.get('/getFirstFiveBooks/:libraryId', async (req, res) => {
+router.get('/getFirst/:libraryId', async (req, res) => {
     const { libraryId } = req.params;
     try {
         console.log(`Fetching first five books for library ID: ${libraryId}`); // Debug log
