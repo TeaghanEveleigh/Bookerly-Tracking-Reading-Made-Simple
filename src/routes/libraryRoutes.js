@@ -16,7 +16,7 @@ router.post('/createLibrary',   async (req, res) => {
         res.status(500).send({ success: false, error: error.message , userId :"id was: " + userId});
     }
     //send that library back to user
-    
+
 });
 
 router.get('/userLibraries',  async (req, res) => {
@@ -41,7 +41,7 @@ router.get('/libraryBooks/:libraryId',   async (req, res) => {
     }
 });
 router.get('/getFirstFiveBooks/:libraryId',   async (req, res) => {
-    
+    const { libraryId } = req.params;
     try {
         const books = await getFirstFiveBooks(libraryId);
         res.send({ success: true, books });
