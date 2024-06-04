@@ -40,12 +40,14 @@ router.get('/libraryBooks/:libraryId',   async (req, res) => {
         res.status(500).send({ success: false, error: error.message });
     }
 });
-router.get('/getFirstFiveBooks/:libraryId',   async (req, res) => {
+router.get('/getFirstFiveBooks/:libraryId', async (req, res) => {
     const { libraryId } = req.params;
     try {
+        console.log(`Fetching first five books for library ID: ${libraryId}`); // Debug log
         const books = await getFirstFiveBooks(libraryId);
         res.send({ success: true, books });
     } catch (error) {
+        console.error('Error in getFirstFiveBooks:', error); // Detailed error log
         res.status(500).send({ success: false, error: error.message });
     }
 });
