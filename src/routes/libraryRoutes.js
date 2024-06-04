@@ -15,6 +15,8 @@ router.post('/createLibrary',   async (req, res) => {
     } catch (error) {
         res.status(500).send({ success: false, error: error.message , userId :"id was: " + userId});
     }
+    //send that library back to user
+    
 });
 
 router.get('/userLibraries',  async (req, res) => {
