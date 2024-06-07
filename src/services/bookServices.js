@@ -28,18 +28,27 @@ const getBook = async (bookId) => {
         throw error; // Rethrow the error to propagate it to the caller
     }
 }
-const checkBookExists = async (bookName , bookDescription) => {
+const checkBookExists = async (bookName, libraryId) => {
     const query = {
-        text: 'SELECT * FROM books WHERE book_name = $1 AND book_description = $2',
-        values: [bookName, bookDescription],
+        text: 'SELECT * FROM books WHERE book_name = $1 AND library_id = $2',
+        values: [bookName, libraryId],
     };
     const result = await pool.query(query);
     return result.rows.length > 0;
-}
+};
+const removeBook = async (bookName, libraryId) => {
+    const query = {
+        text: 'DELETE FROM books WHERE book_name = $1 AND library_id = $2',
+        values: [bookName, libraryId],
+    };
+    const result = await pool.query(query);
+    return result.rowCount > 0;
+};
 
 module.exports = {
     createBook,
     getBook , 
-    checkBookExists
+    checkBookExists,
+    removeBook
 };
 
