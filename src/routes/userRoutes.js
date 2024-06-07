@@ -60,8 +60,8 @@ router.post('/signup', async (req, res) => {
         console.log('Getting user ID');
         const userId = await getUserID(email);
         
-        console.log('Creating user library');
-        const response = await createUserLibrary(userId, "Currently Reading");
+        // console.log('Creating user library');
+        // const response = await createUserLibrary(userId, "Currently Reading");
 
         console.log('Creating JWT token');
         const token = jwt.sign({
