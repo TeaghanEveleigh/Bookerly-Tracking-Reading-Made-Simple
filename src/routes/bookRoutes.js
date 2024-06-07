@@ -1,5 +1,5 @@
 const express = require('express');
-const { createBook, getBook } = require('../services/bookServices');
+const { createBook, getBook , checkBookExists } = require('../services/bookServices');
 const router = express.Router();
 const  isAuthenticated  = require('../middleware/authMiddleware'); 
 
@@ -7,6 +7,12 @@ const  isAuthenticated  = require('../middleware/authMiddleware');
 
 router.post('/createBook',  async (req, res) => {
     const { bookName, bookPreviewPicture, bookDescription, bookAuthors, numberOfPages, estimatedReadTime, publisher, bookLink , libraryId } = req.body;
+    // Check if the book already exists
+    const bookExists = await checkBookExists(bookName, bookDescription);
+    if (bookExists) {
+        return res.send({ success: false, error: 'Book already exists' });
+    }
+    
     try {
         await createBook(bookName, bookPreviewPicture, bookDescription, bookAuthors, numberOfPages, estimatedReadTime, publisher, bookLink , libraryId);
         res.send({ success: true });

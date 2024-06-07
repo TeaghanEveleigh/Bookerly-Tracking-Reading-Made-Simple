@@ -28,8 +28,18 @@ const getBook = async (bookId) => {
         throw error; // Rethrow the error to propagate it to the caller
     }
 }
+const checkBookExists = async (bookName , bookDescription) => {
+    const query = {
+        text: 'SELECT * FROM books WHERE book_name = $1 AND book_description = $2',
+        values: [bookName, bookDescription],
+    };
+    const result = await pool.query(query);
+    return result.rows.length > 0;
+}
+
 module.exports = {
     createBook,
-    getBook
+    getBook , 
+    checkBookExists
 };
 
