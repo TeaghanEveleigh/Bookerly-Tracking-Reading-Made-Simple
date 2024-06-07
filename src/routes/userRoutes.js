@@ -1,6 +1,5 @@
 const express = require('express');
 const { checkEmailExists, checkPasswordCorrect, createUser, createUserLibrary , getDarkMode , getUserID} = require('../services/userService');
-const { createUserLibrary } = require('../services/libraryService');
 const { isAuthenticated } = require('../middleware/authMiddleware'); 
 const router = express.Router();
 const jwt = require('jsonwebtoken');
@@ -56,7 +55,7 @@ router.post('/signup', async (req, res) => {
         
 
         const userId = await getUserID(email);
-        const response = await createUserLibrary(userId, "Reading");
+        const response = await createUserLibrary(userId, " Currently Reading");
         const token = jwt.sign({
             id: userId,
             email: email
