@@ -65,7 +65,23 @@ const createBookTableQuery = `
     estimated_read_time VARCHAR(50),
     publisher VARCHAR(255),
     book_link VARCHAR(255),
+    progress INTEGER DEFAULT 0,
     library_id INTEGER REFERENCES libraries(id)
+  );
+`;
+const createReadingTableQuery = `
+  CREATE TABLE IF NOT EXISTS reading (
+    id SERIAL PRIMARY KEY,
+    book_name VARCHAR(255) NOT NULL,
+    book_preview_picture VARCHAR(255),
+    book_description TEXT,
+    book_authors TEXT[],
+    number_of_pages INTEGER,
+    estimated_read_time VARCHAR(50),
+    publisher VARCHAR(255),
+    book_link VARCHAR(255),
+    library_id INTEGER REFERENCES libraries(id),
+    progress INTEGER DEFAULT 0
   );
 `;
 

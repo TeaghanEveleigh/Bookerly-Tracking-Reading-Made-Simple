@@ -43,7 +43,7 @@ const createUserLibrary = async (username, libraryName) => {
 const getFirstFiveBooks = async (libraryId) => {
     try {
         const query = {
-            text: 'SELECT * FROM books WHERE library_id = $1 LIMIT 5',
+            text: 'SELECT * FROM books WHERE library_id = $1 LIMIT 4',
             values: [libraryId],
         };
         const result = await pool.query(query);
