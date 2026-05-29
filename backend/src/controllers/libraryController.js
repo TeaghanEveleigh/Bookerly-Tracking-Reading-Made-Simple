@@ -1,11 +1,10 @@
-const {
-    createUserLibrary,
+import { createUserLibrary,
     getUserLibraries,
     getLibraryBooks,
     getFirstFiveBooks,
     updateLibrary,
     deleteLibrary,
-} = require('../services/libraryService');
+ } from '../services/library.service';
 
 const create = async (req, res, next) => {
     try {
@@ -74,4 +73,4 @@ const remove = async (req, res, next) => {
     }
 };
 
-module.exports = { create, getUserLibrariesHandler, getBooks, getFirst, update, remove };
+export { create, getUserLibrariesHandler, getBooks, getFirst, update, remove };

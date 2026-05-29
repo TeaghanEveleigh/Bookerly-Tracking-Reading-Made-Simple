@@ -1,4 +1,4 @@
-const bcrypt = require('bcrypt');
+import bcrypt from 'bcrypt';
 const saltRounds = 10; // Number of salt rounds (higher is more secure but slower)
 
 // Function to generate a salt and hash a password
@@ -28,7 +28,4 @@ async function comparePasswords(password, hashedPassword) {
     }
 }
 
-module.exports = {
-    hashPassword,
-    comparePasswords,
-};
+export { hashPassword, comparePasswords,  };

@@ -1,13 +1,12 @@
-const { Router } = require('express');
-const { isAuthenticated } = require('../middleware/authMiddleware');
-const {
-    login,
+import { Router  } from 'express';
+import { isAuthenticated  } from '../middleware/authMiddleware';
+import { login,
     signup,
     update,
     toggleDarkmodeHandler,
     getDarkModeHandler,
     logout,
-} = require('../controllers/userController');
+ } from '../controllers/userController';
 
 const router = Router();
 
@@ -21,4 +20,4 @@ router.patch('/update',          isAuthenticated, update);
 router.post('/toggleDarkmode',   isAuthenticated, toggleDarkmodeHandler);
 router.get('/getDarkMode',       isAuthenticated, getDarkModeHandler);
 
-module.exports = router;
+export default router;

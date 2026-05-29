@@ -1,4 +1,4 @@
-const pool = require('../config/db');
+import pool from '../config/db';
 
 const createBook = async (bookName, bookPreviewPicture, bookDescription, bookAuthors, numberOfPages, estimatedReadTime, publisher, bookLink, libraryId) => {
     const result = await pool.query(
@@ -63,18 +63,12 @@ const updateBook = async (bookId, changes) => {
     return result.rows[0] ?? null;
 };
 
-const removeBook = async (bookName, libraryId) => {
+const removeBook = async (id) => {
     const result = await pool.query(
-        'DELETE FROM books WHERE book_name = $1 AND library_id = $2',
+        'DELETE FROM books WHERE id = $1',
         [bookName, libraryId]
     );
     return (result.rowCount ?? 0) > 0;
 };
 
-module.exports = {
-    createBook,
-    getBook,
-    checkBookExists,
-    updateBook,
-    removeBook,
-};
+export { createBook, getBook, checkBookExists, updateBook, removeBook,  };

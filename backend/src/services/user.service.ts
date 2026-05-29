@@ -1,5 +1,5 @@
-const pool = require('../config/db');
-const { hashPassword, comparePasswords } = require('./securePassword');
+import pool from '../config/db';
+import { hashPassword, comparePasswords  } from '../lib/securePassword';
 
 const getUserById = async (id) => {
     const result = await pool.query(
@@ -85,13 +85,4 @@ const getDarkMode = async (id) => {
     return result.rows[0]?.dark_mode ?? null;
 };
 
-module.exports = {
-    getUserById,
-    getUserID,
-    checkEmailExists,
-    checkPasswordCorrect,
-    createUser,
-    updateUser,
-    toggleDarkmode,
-    getDarkMode,
-};
+export { getUserById, getUserID, checkEmailExists, checkPasswordCorrect, createUser, updateUser, toggleDarkmode, getDarkMode,  };

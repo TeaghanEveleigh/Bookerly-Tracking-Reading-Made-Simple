@@ -1,6 +1,8 @@
-const jwt = require('jsonwebtoken');
+import { Request, Response, NextFunction } from 'express';
 
-function isAuthenticated(req, res, next) {
+import jwt from 'jsonwebtoken';
+
+function isAuthenticated(req :Request, res : Response, next : ) {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
 
@@ -17,4 +19,4 @@ function isAuthenticated(req, res, next) {
     });
 }
 
-module.exports = { isAuthenticated };
+export { isAuthenticated };

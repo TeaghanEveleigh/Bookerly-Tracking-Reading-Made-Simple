@@ -1,38 +1,40 @@
-const pool = require('../config/db');
+import { Library } from "../models/library.model";
 
-const createUserLibrary = async (userId, libraryName) => {
+import pool from '../config/db';
+
+const createUserLibrary = async (id : string, libraryName  :string) => {
     const result = await pool.query(
         'INSERT INTO libraries (user_id, library_name) VALUES ($1, $2) RETURNING *',
-        [userId, libraryName]
+        [id, libraryName]
     );
     return result.rows[0];
 };
 
-const getUserLibraries = async (userId) => {
+const getUserLibraries = async (id : string) => {
     const result = await pool.query(
         'SELECT * FROM libraries WHERE user_id = $1',
-        [userId]
+        [id]
     );
     return result.rows;
 };
 
-const getLibraryBooks = async (libraryId) => {
+const getLibraryBooks = async (id : string) => {
     const result = await pool.query(
         'SELECT * FROM books WHERE library_id = $1',
-        [libraryId]
+        [id]
     );
     return result.rows;
 };
 
-const getFirstFiveBooks = async (libraryId) => {
+const getFirstFiveBooks = async (id) => {
     const result = await pool.query(
         'SELECT * FROM books WHERE library_id = $1 LIMIT 4',
-        [libraryId]
+        [id]
     );
     return result.rows;
 };
 
-const updateLibrary = async (libraryId, changes) => {
+const updateLibrary = async (id : string, changes : Partial<Library>) => {
     const fields = [];
     const values = [];
     let i = 1;
@@ -48,7 +50,7 @@ const updateLibrary = async (libraryId, changes) => {
 
     if (fields.length === 0) return null;
 
-    values.push(libraryId);
+    values.push(id);
     const result = await pool.query(
         `UPDATE libraries SET ${fields.join(', ')} WHERE id = $${i} RETURNING *`,
         values
@@ -56,19 +58,12 @@ const updateLibrary = async (libraryId, changes) => {
     return result.rows[0] ?? null;
 };
 
-const deleteLibrary = async (libraryId) => {
+const deleteLibrary = async (id) => {
     const result = await pool.query(
         'DELETE FROM libraries WHERE id = $1',
-        [libraryId]
+        [id]
     );
     return (result.rowCount ?? 0) > 0;
 };
 
-module.exports = {
-    createUserLibrary,
-    getUserLibraries,
-    getLibraryBooks,
-    getFirstFiveBooks,
-    updateLibrary,
-    deleteLibrary,
-};
+export { createUserLibrary, getUserLibraries, getLibraryBooks, getFirstFiveBooks, updateLibrary, deleteLibrary,  };

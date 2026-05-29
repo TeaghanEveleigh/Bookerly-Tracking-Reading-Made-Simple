@@ -1,14 +1,13 @@
-const jwt = require('jsonwebtoken');
-const {
-    checkEmailExists,
+import jwt from 'jsonwebtoken';
+import { checkEmailExists,
     checkPasswordCorrect,
     createUser,
     updateUser,
     getUserID,
     toggleDarkmode,
     getDarkMode,
-} = require('../services/userService');
-const { createUserLibrary } = require('../services/libraryService');
+ } from '../services/user.service';
+import { createUserLibrary  } from '../services/library.service';
 
 const login = async (req, res, next) => {
     try {
@@ -114,11 +113,4 @@ const logout = (req, res) => {
     res.json({ success: true });
 };
 
-module.exports = {
-    login,
-    signup,
-    update,
-    toggleDarkmodeHandler,
-    getDarkModeHandler,
-    logout,
-};
+export { login, signup, update, toggleDarkmodeHandler, getDarkModeHandler, logout,  };

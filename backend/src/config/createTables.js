@@ -1,6 +1,6 @@
 // createTables.js
 
-const pool = require('./db');
+import pool from './db';
 
 // Query to check if users table exists
 const checkUsersTableQuery = `
@@ -125,4 +125,4 @@ async function createTables() {
   }
 }
 
-module.exports = createTables;
+export default createTables;

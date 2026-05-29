@@ -1,10 +1,9 @@
-const {
-    createBook,
+import { createBook,
     getBook,
     checkBookExists,
     updateBook,
     removeBook,
-} = require('../services/bookServices');
+ } from '../services/book.service';
 
 const create = async (req, res, next) => {
     try {
@@ -62,8 +61,8 @@ const update = async (req, res, next) => {
 
 const remove = async (req, res, next) => {
     try {
-        const { bookName, libraryId } = req.params;
-        const deleted = await removeBook(bookName, libraryId);
+        const { id } = req.params;
+        const deleted = await removeBook(id);
         if (!deleted) {
             return res.status(404).json({ success: false, error: 'Book not found' });
         }
@@ -73,4 +72,4 @@ const remove = async (req, res, next) => {
     }
 };
 
-module.exports = { create, getOne, update, remove };
+export { create, getOne, update, remove };

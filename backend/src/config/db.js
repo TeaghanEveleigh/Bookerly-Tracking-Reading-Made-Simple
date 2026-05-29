@@ -1,4 +1,4 @@
-const { Pool } = require('pg');
+import { Pool  } from 'pg';
 
 // Create a new pool instance using the DATABASE_URL environment variable
 const pool = new Pool({
@@ -9,4 +9,4 @@ const pool = new Pool({
 });
 
 // Export the pool for accessing the database connection
-module.exports = pool;
+export default pool;
