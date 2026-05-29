@@ -1,4 +1,4 @@
-# Relay
+# Bookerly
 
 > **Book tracking made easy, app built through Node.js and Vite with a PG database**
 
