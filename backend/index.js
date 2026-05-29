@@ -1,9 +1,9 @@
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const userRoutes = require('./src/routes/userRoutes');
 const bookRoutes = require('./src/routes/bookRoutes');
 const libraryRoutes = require('./src/routes/libraryRoutes');
-const discoverRoutes = require('./src/routes/discoverRoutes');
 const createTables = require('./src/config/createTables');
 const pool = require('./src/config/db.js');
 const { isAuthenticated } = require('./src/middleware/authMiddleware');
@@ -31,7 +31,6 @@ app.use(cors({
 
 app.options('*', cors());
 app.use(express.json());
-
 pool.connect((err) => {
     if (err) {
         console.error('Failed to connect to database:', err);
@@ -44,7 +43,6 @@ pool.connect((err) => {
 app.use('/user',     userRoutes);
 app.use('/book',     isAuthenticated, bookRoutes);
 app.use('/library',  isAuthenticated, libraryRoutes);
-app.use('/discover', isAuthenticated, discoverRoutes);
 
 app.get('/', (req, res) => res.send('Hello World!'));
 
