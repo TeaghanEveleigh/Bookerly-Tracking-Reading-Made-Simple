@@ -1,22 +1,47 @@
-import { Request, Response, NextFunction } from 'express';
+import type { Request, Response, NextFunction } from 'express';
+import jwt, { type JwtPayload } from 'jsonwebtoken';
 
-import jwt from 'jsonwebtoken';
-
-function isAuthenticated(req :Request, res : Response, next : ) {
-    const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1];
-
-    if (!token) {
-        return res.status(401).json({ error: 'No token provided' });
-    }
-
-    jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
-        if (err) {
-            return res.status(401).json({ error: 'Unauthorized' });
-        }
-        req.user = decoded;
-        next();
-    });
+interface AuthPayload extends JwtPayload {
+  id: number;
+  email: string;
 }
 
-export { isAuthenticated };
+export const isAuthenticated = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): void => {
+  const authHeader = req.headers.authorization;
+  const token = authHeader?.split(' ')[1];
+
+  if (!token) {
+    res.status(401).json({
+      success: false,
+      error: 'No token provided',
+    });
+    return;
+  }
+
+  const jwtSecret = process.env.JWT_SECRET;
+
+  if (!jwtSecret) {
+    res.status(500).json({
+      success: false,
+      error: 'JWT secret is not configured',
+    });
+    return;
+  }
+
+  try {
+    const decoded = jwt.verify(token, jwtSecret) as AuthPayload;
+
+    req.user = decoded;
+
+    next();
+  } catch {
+    res.status(401).json({
+      success: false,
+      error: 'Unauthorized',
+    });
+  }
+};

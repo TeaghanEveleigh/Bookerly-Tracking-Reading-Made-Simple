@@ -1,88 +1,59 @@
-import pool from '../config/db';
-import { hashPassword, comparePasswords  } from '../lib/securePassword';
+import { createUserDto, User } from '#/models/user.model.js';
+import pool from '#/config/db.js';
 
-const getUserById = async (id) => {
+const findAllUsers = async () => {
     const result = await pool.query(
-        'SELECT id, email, dark_mode, created_at FROM users WHERE id = $1',
-        [id]
+        'SELECT email , dark_mode , created_at  FROM users'
     );
-    return result.rows[0] ?? null;
+    return result.rows[0]?.id ?? null;
 };
-
-const getUserID = async (email) => {
+const findUserById = async (id: string) => {
     const result = await pool.query(
-        'SELECT id FROM users WHERE email = $1',
-        [email]
+        'SELECT email , dark_mode , created_at  FROM users WHERE id = $1',
+        [id]
     );
     return result.rows[0]?.id ?? null;
 };
 
-const checkEmailExists = async (email) => {
+const findUserByEmail = async (email: string) => {
     const result = await pool.query(
-        'SELECT id FROM users WHERE email = $1',
+        'SELECT FROM users WHERE email = $1',
         [email]
     );
     return result.rows.length > 0;
 };
 
-const checkPasswordCorrect = async (email, password) => {
+const createUser = async (user: createUserDto) => {
+    const userExists = await findUserByEmail(user.email);
+    if (userExists) return null
     const result = await pool.query(
-        'SELECT password FROM users WHERE email = $1',
-        [email]
-    );
-    if (result.rows.length === 0) return false;
-    return comparePasswords(password, result.rows[0].password);
-};
-
-const createUser = async (email, password) => {
-    const userExists = await checkEmailExists(email);
-    if (userExists) throw new Error('User already exists');
-
-    const hashed = await hashPassword(password);
-    await pool.query(
         'INSERT INTO users (email, password) VALUES ($1, $2)',
-        [email, hashed]
+        [user.email, user.password_hash]
     );
+    return result.rows[0] ?? null
 };
 
-const updateUser = async (id, changes) => {
-    const fields = [];
-    const values = [];
-    let i = 1;
-
-    if (changes.email !== undefined) {
-        fields.push(`email = $${i++}`);
-        values.push(changes.email);
-    }
-    if (changes.password !== undefined) {
-        fields.push(`password = $${i++}`);
-        values.push(await hashPassword(changes.password));
-    }
-
-    if (fields.length === 0) return null;
-
-    values.push(id);
+const updateUser = async (id: string, user: Partial<User>) => {
+    //get the values to change
+    const changes = Object.entries(user).filter(([_, value]) => { return value != undefined })
+    if (changes.length < 1) return null;
+    const setClause = changes.map(([key], index) => { return `${key} = $${index + 2}` }).join(', ')
+    const values = changes.map(([_, value]) => { return value })
     const result = await pool.query(
-        `UPDATE users SET ${fields.join(', ')} WHERE id = $${i} RETURNING id, email, dark_mode, created_at`,
-        values
+        `UPDATE users
+          SET ${setClause}
+          WHERE id = $1
+          RETURNING *`,
+        [id, ...values]
+    );
+    return result.rows ?? null;
+};
+const deleteUserById = async (id: string) => {
+    const result = await pool.query(
+        'DELETE FROM users WHERE id = $1 RETURNING *',
+        [id]
     );
     return result.rows[0] ?? null;
 };
 
-const toggleDarkmode = async (id) => {
-    const result = await pool.query(
-        'UPDATE users SET dark_mode = NOT dark_mode WHERE id = $1 RETURNING dark_mode',
-        [id]
-    );
-    return result.rows[0]?.dark_mode ?? null;
-};
-
-const getDarkMode = async (id) => {
-    const result = await pool.query(
-        'SELECT dark_mode FROM users WHERE id = $1',
-        [id]
-    );
-    return result.rows[0]?.dark_mode ?? null;
-};
-
-export { getUserById, getUserID, checkEmailExists, checkPasswordCorrect, createUser, updateUser, toggleDarkmode, getDarkMode,  };
+export { findAllUsers, findUserById, createUser, updateUser, deleteUserById, findUserByEmail };

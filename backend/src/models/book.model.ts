@@ -10,6 +10,8 @@ export interface Book {
   estimated_read_time?: string;
   publisher?: string;
   book_link?: string;
-  progress: number;
+  progress_page: number;
+  progress_percent : number
   library_id: string;
+  
 }
