@@ -1,23 +1,17 @@
 import { Router  } from 'express';
 import { isAuthenticated  } from '../middleware/authMiddleware';
-import { login,
-    signup,
-    update,
-    toggleDarkmodeHandler,
-    getDarkModeHandler,
-    logout,
+import {
+
  } from '../controllers/userController';
 
 const router = Router();
 
-// Public
-router.post('/login',  login);
-router.post('/signup', signup);
-router.get('/logout',  logout);
+// isAuthenticated applied globally in index.js for /book
+router.post('/',  isAuthenticated, create);
+router.get('/',  isAuthenticated, findAll);
+router.get('/:id', isAuthenticated,                 findSingle);
+router.patch('/:id',  isAuthenticated,           update);   // new
+router.delete('/:id',isAuthenticated, delete);
 
-// Protected — need JWT to know which user
-router.patch('/update',          isAuthenticated, update);
-router.post('/toggleDarkmode',   isAuthenticated, toggleDarkmodeHandler);
-router.get('/getDarkMode',       isAuthenticated, getDarkModeHandler);
 
 export default router;

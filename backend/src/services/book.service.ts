@@ -1,11 +1,12 @@
+import { Book } from '#/models/book.model.js';
 import pool from '../config/db';
 
-const createBook = async (bookName, bookPreviewPicture, bookDescription, bookAuthors, numberOfPages, estimatedReadTime, publisher, bookLink, libraryId) => {
+const createBook = async (book : Partial<Book>) => {
     const result = await pool.query(
         `INSERT INTO books (book_name, book_preview_picture, book_description, book_authors,
          number_of_pages, estimated_read_time, publisher, book_link, library_id)
          VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING *`,
-        [bookName, bookPreviewPicture, bookDescription, bookAuthors, numberOfPages, estimatedReadTime, publisher, bookLink, libraryId]
+        [book.book_name, book.book_preview_picture, book.book_description, book.book_authors, book.number_of_pages, book.estimated_read_time, book.publisher, book.book_link, book.library_id]
     );
     return result.rows[0];
 };

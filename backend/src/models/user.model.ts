@@ -1,7 +1,7 @@
 // User.ts
 
 export interface User {
-  id: number;
+  id: string;
   email: string;
   password_hash: string;
   dark_mode: boolean;

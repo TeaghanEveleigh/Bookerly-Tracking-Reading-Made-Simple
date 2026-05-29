@@ -3,7 +3,7 @@ import { createBook,
     checkBookExists,
     updateBook,
     removeBook,
- } from '../services/book.service';
+ } from '../services/book.service.js';
 
 const create = async (req, res, next) => {
     try {

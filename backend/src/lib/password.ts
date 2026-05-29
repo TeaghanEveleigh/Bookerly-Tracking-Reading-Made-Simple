@@ -2,7 +2,7 @@ import bcrypt from 'bcrypt';
 const saltRounds = 10; // Number of salt rounds (higher is more secure but slower)
 
 // Function to generate a salt and hash a password
-async function hashPassword(password) {
+async function hashPassword(password : string) {
     try {
         // Generate a salt
         const salt = await bcrypt.genSalt(saltRounds);
@@ -17,7 +17,7 @@ async function hashPassword(password) {
 }
 
 // Function to compare a password with a hashed password
-async function comparePasswords(password, hashedPassword) {
+async function comparePasswords(password : string, hashedPassword :string ) {
     try {
         // Compare the provided password with the hashed password
         const match = await bcrypt.compare(password, hashedPassword);

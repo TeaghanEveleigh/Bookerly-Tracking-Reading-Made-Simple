@@ -7,6 +7,5 @@ const pool = new Pool({
     rejectUnauthorized: false
   }
 });
-
 // Export the pool for accessing the database connection
 export default pool;

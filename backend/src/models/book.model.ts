@@ -1,7 +1,7 @@
 // Book.ts
 
 export interface Book {
-  id: number;
+  id: string;
   book_name: string;
   book_preview_picture?: string;
   book_description?: string;
@@ -11,5 +11,5 @@ export interface Book {
   publisher?: string;
   book_link?: string;
   progress: number;
-  library_id: number;
+  library_id: string;
 }
