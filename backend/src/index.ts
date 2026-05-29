@@ -1,12 +1,12 @@
 require('dotenv').config();
 import express from 'express';
 import cors from 'cors';
-import userRoutes from './src/routes/user.routes.js';
-import bookRoutes from './src/routes/book.routes.js';
-import libraryRoutes from './src/routes/library.routes.js';
-import createTables from './src/config/createTables';
-import pool from './src/config/db.js';
-import { isAuthenticated  } from './src/middleware/authMiddleware';
+import userRoutes from './routes/user.routes.js';
+import bookRoutes from './routes/book.routes.js';
+import libraryRoutes from './routes/library.routes.js';
+import createTables from './config/createTables.js';
+import pool from './config/db.js';
+import { isAuthenticated  } from './middleware/authMiddleware.js';
 
 const app = express();
 

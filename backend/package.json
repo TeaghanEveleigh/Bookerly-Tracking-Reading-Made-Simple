@@ -4,11 +4,29 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "tsx watch src/index.ts",
+    "start": "node dist/server.js",
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier . --check",
+    "format:fix": "prettier . --write",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "verify": "npm run typecheck && npm run lint && npm run format && npm run test",
+    "verify:fix": "npm run lint:fix && npm run format:fix && npm run typecheck && npm run test"
   },
   "keywords": [],
   "author": "",
+  "type": "module",
+  "imports": {
+    "#/*": {
+      "development": "./src/*",
+      "default": "./dist/*"
+    }
+  },
+
   "license": "ISC",
   "dependencies": {
     "axios": "^1.6.8",
@@ -22,9 +40,17 @@
     "pg": "^8.11.5"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/express": "^5.0.6",
     "@types/node": "^25.9.1",
     "dotenv": "^17.4.2",
+    "eslint": "^10.4.1",
+    "globals": "^17.6.0",
+    "prettier": "^3.8.3",
     "ts-node": "^10.9.2",
-    "typescript": "^6.0.3"
+    "tsx": "^4.22.3",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.60.0",
+    "vitest": "^4.1.7"
   }
 }

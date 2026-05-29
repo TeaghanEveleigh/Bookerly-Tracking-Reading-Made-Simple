@@ -5,18 +5,18 @@ import { create,
     getFirst,
     update,
     remove,
- } from '../controllers/libraryController';
+ } from '';
 
 const router = Router();
 
 router.post('/',                      create);
-router.get('/',                  findAllBooks);
-router.get('/:id',                  findSingleBook);
+router.get('/',                  findAlls);
+router.get('/:id',                  findSingle);
 //book fetching nested 
 router.get('/id/books' , getBooksForLibrary);
-router.post('id/books')
+router.post('id/books' , addBookToLibrary);
 //Other Operations
-router.patch('/:id', update);   s
+router.patch('/:id', update);   
 router.delete('/:id', delete);
 
 
