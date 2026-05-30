@@ -1,5 +1,3 @@
-// Book.ts
-
 export interface Book {
   id: string;
   book_name: string;
@@ -11,7 +9,11 @@ export interface Book {
   publisher?: string;
   book_link?: string;
   progress_page: number;
-  progress_percent : number
+  progress_percent: number;
   library_id: string;
-  
 }
+
+export type CreateBookDto = Omit<Book, 'id' | 'progress_page' | 'progress_percent'> &
+  Partial<Pick<Book, 'progress_page' | 'progress_percent'>>;
+
+export type UpdateBookDto = Partial<Omit<Book, 'id' | 'library_id'>>;

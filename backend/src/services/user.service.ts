@@ -20,14 +20,14 @@ const findUserByEmail = async (email: string) => {
         'SELECT FROM users WHERE email = $1',
         [email]
     );
-    return result.rows.length > 0;
+    return result.rows[0] ?? null;
 };
 
 const createUser = async (user: createUserDto) => {
     const userExists = await findUserByEmail(user.email);
     if (userExists) return null
     const result = await pool.query(
-        'INSERT INTO users (email, password) VALUES ($1, $2)',
+        'INSERT INTO users (email, password_hash) VALUES ($1, $2)',
         [user.email, user.password_hash]
     );
     return result.rows[0] ?? null
@@ -46,7 +46,7 @@ const updateUser = async (id: string, user: Partial<User>) => {
           RETURNING *`,
         [id, ...values]
     );
-    return result.rows ?? null;
+    return result.rows[0] ?? null;
 };
 const deleteUserById = async (id: string) => {
     const result = await pool.query(

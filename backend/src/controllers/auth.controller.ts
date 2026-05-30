@@ -1,67 +1,89 @@
-export const login = async (req, res, next) => {
-    try {
-        const { email, password } = req.body;
-        if (!email || !password) {
-            return res.status(400).json({ success: false, error: 'Email and password are required' });
-        }
+import type { NextFunction, Request, Response } from 'express';
+import jwt from 'jsonwebtoken';
+import { isProvided, isString } from '#/lib/typevalidators.js';
+import { createUserLibrary } from '#/services/library.service.js';
+import {
+  checkEmailExists,
+  checkPasswordCorrect,
+  createAuthUser,
+  findAuthUserByEmail,
+} from '#/services/auth.service.js';
 
-        const emailExists = await checkEmailExists(email);
-        if (!emailExists) {
-            return res.status(401).json({ success: false, error: 'Invalid credentials' });
-        }
+const DEFAULT_LIBRARY_NAMES = ['Currently Reading', 'Want to Read', 'Read'] as const;
 
-        const passwordCorrect = await checkPasswordCorrect(email, password);
-        if (!passwordCorrect) {
-            return res.status(401).json({ success: false, error: 'Invalid credentials' });
-        }
+const createToken = (id: string, email: string): string => {
+  const jwtSecret = process.env.JWT_SECRET;
 
-        const userId = await getUserID(email);
-        const token = jwt.sign(
-            { id: userId, email },
-            process.env.JWT_SECRET,
-            { expiresIn: '1d' }
-        );
+  if (!jwtSecret) {
+    throw new Error('JWT secret is not configured');
+  }
 
-        res.json({ success: true, token });
-    } catch (err) {
-        next(err);
+  return jwt.sign({ id, email }, jwtSecret, { expiresIn: '1d' });
+};
+
+const login = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const { email, password } = req.body;
+
+    if (!isProvided(email) || !isString(email) || !isProvided(password) || !isString(password)) {
+      res.status(400).json({ success: false, error: 'Email and password are required' });
+      return;
     }
-};
 
-export const signup = async (req, res, next) => {
-    try {
-        const { email, password } = req.body;
-        if (!email || !password) {
-            return res.status(400).json({ success: false, error: 'Email and password are required' });
-        }
+    const passwordCorrect = await checkPasswordCorrect(email, password);
 
-        const emailExists = await checkEmailExists(email);
-        if (emailExists) {
-            return res.status(409).json({ success: false, error: 'Email already in use' });
-        }
-
-        await createUser(email, password);
-        const userId = await getUserID(email);
-
-        // Create default libraries for new user
-        await Promise.all([
-            createUserLibrary(userId, 'Currently Reading'),
-            createUserLibrary(userId, 'Want to Read'),
-            createUserLibrary(userId, 'Finished Reading'),
-        ]);
-
-        const token = jwt.sign(
-            { id: userId, email },
-            process.env.JWT_SECRET,
-            { expiresIn: '1d' }
-        );
-
-        res.status(201).json({ success: true, token });
-    } catch (err) {
-        next(err);
+    if (!passwordCorrect) {
+      res.status(401).json({ success: false, error: 'Invalid credentials' });
+      return;
     }
-};
-export const logout = (req, res) => {
-    res.json({ success: true });
+
+    const user = await findAuthUserByEmail(email);
+
+    if (!user) {
+      res.status(401).json({ success: false, error: 'Invalid credentials' });
+      return;
+    }
+
+    const token = createToken(user.id, user.email);
+
+    res.json({ success: true, token });
+  } catch (err) {
+    next(err);
+  }
 };
 
+const signup = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const { email, password } = req.body;
+
+    if (!isProvided(email) || !isString(email) || !isProvided(password) || !isString(password)) {
+      res.status(400).json({ success: false, error: 'Email and password are required' });
+      return;
+    }
+
+    const emailExists = await checkEmailExists(email);
+
+    if (emailExists) {
+      res.status(409).json({ success: false, error: 'Email already in use' });
+      return;
+    }
+
+    const user = await createAuthUser(email, password);
+
+    await Promise.all(
+      DEFAULT_LIBRARY_NAMES.map((libraryName) => createUserLibrary(user.id, libraryName))
+    );
+
+    const token = createToken(user.id, user.email);
+
+    res.status(201).json({ success: true, token });
+  } catch (err) {
+    next(err);
+  }
+};
+
+const logout = (_req: Request, res: Response): void => {
+  res.json({ success: true });
+};
+
+export { login, logout, signup };

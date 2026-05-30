@@ -1,75 +1,114 @@
-import { Book } from '#/models/book.model.js';
-import pool from '../config/db';
+import pool from '#/config/db.js';
+import type { Book, CreateBookDto, UpdateBookDto } from '#/models/book.model.js';
 
-const createBook = async (book : Partial<Book>) => {
-    const result = await pool.query(
-        `INSERT INTO books (book_name, book_preview_picture, book_description, book_authors,
-         number_of_pages, estimated_read_time, publisher, book_link, library_id)
-         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING *`,
-        [book.book_name, book.book_preview_picture, book.book_description, book.book_authors, book.number_of_pages, book.estimated_read_time, book.publisher, book.book_link, book.library_id]
-    );
-    return result.rows[0];
+const BOOK_FIELDS = [
+  'id',
+  'book_name',
+  'book_preview_picture',
+  'book_description',
+  'book_authors',
+  'number_of_pages',
+  'estimated_read_time',
+  'publisher',
+  'book_link',
+  'progress_page',
+  'progress_percent',
+  'library_id',
+] as const;
+
+const BOOK_SELECT_FIELDS = BOOK_FIELDS.join(', ');
+const UPDATABLE_BOOK_FIELDS = BOOK_FIELDS.filter(
+  (field) => field !== 'id' && field !== 'library_id'
+);
+
+const createBook = async (book: CreateBookDto): Promise<Book> => {
+  const result = await pool.query<Book>(
+    `INSERT INTO books (
+      book_name,
+      book_preview_picture,
+      book_description,
+      book_authors,
+      number_of_pages,
+      estimated_read_time,
+      publisher,
+      book_link,
+      progress_page,
+      progress_percent,
+      library_id
+    )
+    VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)
+    RETURNING ${BOOK_SELECT_FIELDS}`,
+    [
+      book.book_name,
+      book.book_preview_picture,
+      book.book_description,
+      book.book_authors,
+      book.number_of_pages,
+      book.estimated_read_time,
+      book.publisher,
+      book.book_link,
+      book.progress_page ?? 0,
+      book.progress_percent ?? 0,
+      book.library_id,
+    ]
+  );
+
+  return result.rows[0];
 };
 
-const getBook = async (bookId) => {
-    const result = await pool.query(
-        'SELECT * FROM books WHERE id = $1',
-        [bookId]
-    );
-    return result.rows[0] ?? null;
+const findAllBooks = async (): Promise<Book[]> => {
+  const result = await pool.query<Book>(`SELECT ${BOOK_SELECT_FIELDS} FROM books`);
+
+  return result.rows;
 };
 
-const checkBookExists = async (bookName, libraryId) => {
-    const result = await pool.query(
-        'SELECT id FROM books WHERE book_name = $1 AND library_id = $2',
-        [bookName, libraryId]
-    );
-    return result.rows.length > 0;
+const findBookById = async (id: string): Promise<Book | null> => {
+  const result = await pool.query<Book>(`SELECT ${BOOK_SELECT_FIELDS} FROM books WHERE id = $1`, [
+    id,
+  ]);
+
+  return result.rows[0] ?? null;
 };
 
-const updateBook = async (bookId, changes) => {
-    const fields = [];
-    const values = [];
-    let i = 1;
+const checkBookExists = async (bookName: string, libraryId: string): Promise<boolean> => {
+  const result = await pool.query<{ id: string }>(
+    'SELECT id FROM books WHERE book_name = $1 AND library_id = $2',
+    [bookName, libraryId]
+  );
 
-    const allowed = [
-        'book_name', 'book_preview_picture', 'book_description',
-        'book_authors', 'number_of_pages', 'estimated_read_time',
-        'publisher', 'book_link', 'progress', 'status'
-    ];
-
-    for (const key of allowed) {
-        if (changes[key] !== undefined) {
-            fields.push(`${key} = $${i++}`);
-            values.push(changes[key]);
-        }
-    }
-
-    if (fields.length === 0) return getBook(bookId);
-
-    // Auto-drive status from progress
-    if (changes.progress === 100 && !changes.status) {
-        fields.push(`status = $${i++}`);
-        values.push('finished');
-    } else if (changes.progress > 0 && changes.progress < 100 && !changes.status) {
-        fields.push(`status = $${i++}`);
-        values.push('reading');
-    }
-
-    values.push(bookId);
-    const result = await pool.query(
-        `UPDATE books SET ${fields.join(', ')} WHERE id = $${i} RETURNING *`,
-        values
-    );
-    return result.rows[0] ?? null;
+  return result.rows.length > 0;
 };
 
-const removeBook = async (id) => {
-    const result = await pool.query(
-        'DELETE FROM books WHERE id = $1',
-        [bookName, libraryId]
-    );
-    return (result.rowCount ?? 0) > 0;
+const updateBook = async (id: string, changes: UpdateBookDto): Promise<Book | null> => {
+  const entries = Object.entries(changes).filter(
+    ([field, value]) =>
+      UPDATABLE_BOOK_FIELDS.includes(field as (typeof UPDATABLE_BOOK_FIELDS)[number]) &&
+      value !== undefined
+  );
+
+  if (entries.length === 0) return null;
+
+  const setClause = entries.map(([field], index) => `${field} = $${index + 2}`).join(', ');
+  const values = entries.map(([, value]) => value);
+
+  const result = await pool.query<Book>(
+    `UPDATE books
+     SET ${setClause}
+     WHERE id = $1
+     RETURNING ${BOOK_SELECT_FIELDS}`,
+    [id, ...values]
+  );
+
+  return result.rows[0] ?? null;
 };
 
-export { createBook, getBook, checkBookExists, updateBook, removeBook,  };
+const deleteBookById = async (id: string): Promise<Book | null> => {
+  const result = await pool.query<Book>(
+    `DELETE FROM books WHERE id = $1 RETURNING ${BOOK_SELECT_FIELDS}`,
+    [id]
+  );
+
+  return result.rows[0] ?? null;
+};
+
+export { checkBookExists, createBook, deleteBookById, findAllBooks, findBookById, updateBook };

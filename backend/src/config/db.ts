@@ -1,11 +1,12 @@
-import { Pool  } from 'pg';
+import pg from 'pg';
 
-// Create a new pool instance using the DATABASE_URL environment variable
-export const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: {
-    rejectUnauthorized: false
-  }
+const { Pool } = pg;
+
+console.log(process.env.DATABASE_URL)
+const pool = new Pool({
+  connectionString:process.env.NODE_ENV === 'test'
+    ? process.env.VITE_DATABASE_URL
+    : process.env.DATABASE_URL,
 });
-// Export the pool for accessing the database connection
+
 export default pool;
