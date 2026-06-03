@@ -21,7 +21,7 @@ const create = async (req: Request, res: Response, next: NextFunction): Promise<
       publisher,
       book_link,
       progress_page,
-      progress_percent,
+      progress_percentage,
       library_id,
     } = req.body;
 
@@ -52,7 +52,7 @@ const create = async (req: Request, res: Response, next: NextFunction): Promise<
       publisher,
       book_link,
       progress_page,
-      progress_percent,
+      progress_percentage,
       library_id,
     });
 

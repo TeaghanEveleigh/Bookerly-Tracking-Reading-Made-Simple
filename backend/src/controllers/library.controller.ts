@@ -78,12 +78,13 @@ const getUserLibrariesHandler = async (
   res: Response,
   next: NextFunction
 ): Promise<void> => {
+  const { page  , size } = req.params;
   try {
     const userId = getAuthenticatedUserId(req, res);
 
     if (!userId) return;
 
-    const libraries = await getUserLibraries(userId);
+    const libraries = await getUserLibraries(userId , page , size);
 
     res.status(200).json({ success: true, libraries });
   } catch (err) {

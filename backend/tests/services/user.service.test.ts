@@ -21,7 +21,6 @@ const createTestUser = async () => {
   };
 
   const user = await createUser(testUser);
-  console.log("USER IS" , user)
   createdUserIds.push(user?.id);
 
   return user;
@@ -56,9 +55,7 @@ describe('User Service Operations', () => {
 
   it('finds a user by id', async () => {
     const user = await createTestUser();
-
     const foundUser = await findUserById(user.id);
-
     expect(foundUser).toBeDefined();
     expect(foundUser?.id).toBe(user.id);
     expect(foundUser?.email).toBe(user.email);
@@ -68,7 +65,6 @@ describe('User Service Operations', () => {
     const user = await createTestUser();
 
     const foundUser = await findUserByEmail(user.email);
-
     expect(foundUser).toBeDefined();
     expect(foundUser?.id).toBe(user.id);
     expect(foundUser?.email).toBe(user.email);

@@ -9,11 +9,11 @@ export interface Book {
   publisher?: string;
   book_link?: string;
   progress_page: number;
-  progress_percent: number;
+  progress_percentage: number;
   library_id: string;
 }
 
-export type CreateBookDto = Omit<Book, 'id' | 'progress_page' | 'progress_percent'> &
-  Partial<Pick<Book, 'progress_page' | 'progress_percent'>>;
+export type CreateBookDto = Omit<Book, 'id' | 'progress_page' | 'progress_percentage'> &
+  Partial<Pick<Book, 'progress_page' | 'progress_percentage'>>;
 
 export type UpdateBookDto = Partial<Omit<Book, 'id' | 'library_id'>>;

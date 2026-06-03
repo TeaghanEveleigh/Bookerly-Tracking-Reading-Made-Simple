@@ -3,21 +3,22 @@ import pool from '#/config/db.js';
 
 const findAllUsers = async () => {
     const result = await pool.query(
-        'SELECT email , dark_mode , created_at  FROM users'
+        'SELECT email , dark_mode , created_at , id  FROM users'
     );
-    return result.rows[0]?.id ?? null;
+    return result.rows ?? null;
 };
+
 const findUserById = async (id: string) => {
     const result = await pool.query(
-        'SELECT email , dark_mode , created_at  FROM users WHERE id = $1',
+        'SELECT * FROM users WHERE id = $1',
         [id]
     );
-    return result.rows[0]?.id ?? null;
+    return result.rows[0] ?? null;
 };
 
 const findUserByEmail = async (email: string) => {
     const result = await pool.query(
-        'SELECT FROM users WHERE email = $1',
+        'SELECT * FROM users WHERE email = $1',
         [email]
     );
     return result.rows[0] ?? null;
@@ -27,7 +28,7 @@ const createUser = async (user: createUserDto) => {
     const userExists = await findUserByEmail(user.email);
     if (userExists) return null
     const result = await pool.query(
-        'INSERT INTO users (email, password_hash) VALUES ($1, $2)',
+        'INSERT INTO users (email, password_hash) VALUES ($1, $2) RETURNING *',
         [user.email, user.password_hash]
     );
     return result.rows[0] ?? null

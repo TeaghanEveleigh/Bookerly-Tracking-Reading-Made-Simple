@@ -12,7 +12,7 @@ const BOOK_FIELDS = [
   'publisher',
   'book_link',
   'progress_page',
-  'progress_percent',
+  'progress_percentage',
   'library_id',
 ] as const;
 
@@ -33,7 +33,7 @@ const createBook = async (book: CreateBookDto): Promise<Book> => {
       publisher,
       book_link,
       progress_page,
-      progress_percent,
+      progress_percentage,
       library_id
     )
     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)
@@ -48,7 +48,7 @@ const createBook = async (book: CreateBookDto): Promise<Book> => {
       book.publisher,
       book.book_link,
       book.progress_page ?? 0,
-      book.progress_percent ?? 0,
+      book.progress_percentage ?? 0,
       book.library_id,
     ]
   );

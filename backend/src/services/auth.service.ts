@@ -2,7 +2,7 @@ import pool from '#/config/db.js';
 import { comparePasswords, hashPassword } from '#/lib/password.js';
 import type { AuthUser } from '#/models/auth.models.js';
 
-const USER_SELECT_FIELDS = 'id, email, password AS password_hash';
+const USER_SELECT_FIELDS = 'id, email, password_hash';
 
 const findAuthUserByEmail = async (email: string): Promise<AuthUser | null> => {
   const result = await pool.query<AuthUser>(
@@ -22,7 +22,7 @@ const checkEmailExists = async (email: string): Promise<boolean> => {
 const createAuthUser = async (email: string, password: string): Promise<AuthUser> => {
   const passwordHash = await hashPassword(password);
   const result = await pool.query<AuthUser>(
-    `INSERT INTO users (email, password)
+    `INSERT INTO users (email, password_hash)
      VALUES ($1, $2)
      RETURNING ${USER_SELECT_FIELDS}`,
     [email, passwordHash]

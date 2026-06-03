@@ -3,6 +3,7 @@ export interface Library {
   library_name: string;
   library_photo_url?: string;
   user_id: string;
+  created_at : Date
 }
 
 export type CreateLibraryDto = Pick<Library, 'library_name'> &

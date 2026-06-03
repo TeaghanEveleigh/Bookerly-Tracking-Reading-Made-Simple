@@ -32,10 +32,11 @@ const findLibraryById = async (id: string): Promise<Library | null> => {
   return result.rows[0] ?? null;
 };
 
-const getUserLibraries = async (id: string): Promise<Library[]> => {
+const getUserLibraries = async (id: string , page : string , size : string): Promise<Library[]> => {
+  const offset =  parseInt(size) *  ( parseInt(page) - 1 ) 
   const result = await pool.query<Library>(
-    `SELECT ${LIBRARY_SELECT_FIELDS} FROM libraries WHERE user_id = $1`,
-    [id]
+    `SELECT ${LIBRARY_SELECT_FIELDS} FROM libraries WHERE user_id = $1 ORDER BY created_at ASC LIMIT $2 OFFSET $3 `,
+    [id , size , offset]
   );
 
   return result.rows;
