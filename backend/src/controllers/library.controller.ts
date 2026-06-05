@@ -81,7 +81,7 @@ const getUserLibrariesHandler = async (
   const { page  , size } = req.params;
   try {
     const userId = getAuthenticatedUserId(req, res);
-
+    
     if (!userId) return;
 
     const libraries = await getUserLibraries(userId , page , size);
