@@ -11,11 +11,11 @@
 
 
 ## Stack
-- **Javascript** — across frontend and backend
+- **Typescript** — across frontend and backend
 - **Vite** — frontend tooling
 - **Express** — backend HTTP server
 - **PostgreSQL** — primary data store
-- **Redis** — coordination, caching, pub/sub
+- **Redis** — coordination, caching
 - **Material UI** — frontend component library
 
 
