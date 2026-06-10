@@ -9,9 +9,8 @@
     "rootDir": "src",
     "outDir": "dist",
 
-    "baseUrl": ".",
     "paths": {
-      "#/*": ["src/*"]
+      "#/*": ["./src/*"]
     },
 
     "strict": true,
@@ -22,6 +21,6 @@
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src/**/*.ts",  "tests/**/*.ts" , "vitest.config.ts"],
+  "include": ["src/**/*.ts"],
   "exclude": ["node_modules", "dist", "coverage"]
 }
