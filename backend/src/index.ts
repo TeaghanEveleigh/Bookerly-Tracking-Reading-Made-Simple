@@ -12,6 +12,7 @@ import userRoutes from './routes/user.routes.js';
 import bookRoutes from './routes/book.routes.js';
 import libraryRoutes from './routes/library.routes.js';
 import pool from './config/db.js';
+import { connectRedis } from './config/redis.js';
 import { isAuthenticated } from './middleware/authMiddleware.js';
 
 const app = express();
@@ -51,6 +52,8 @@ pool.connect((err) => {
 
   console.log('Connected to database');
 });
+await connectRedis()
+
 
 // User routes manage their own auth per-route.
 // Login/signup are public.
