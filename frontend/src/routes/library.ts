@@ -1,5 +1,3 @@
-// src/routes/about.tsx
-
 import { createFileRoute } from "@tanstack/react-router";
 
 import { Library } from "../pages/library";

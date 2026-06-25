@@ -1,9 +1,7 @@
-// src/routes/about.tsx
-
 import { createFileRoute } from "@tanstack/react-router";
 
-import { Library } from "../pages/library";
+import { Book } from "../pages/book";
 
 export const Route = createFileRoute("/book")({
-  component: Library,
+	component: Book,
 });

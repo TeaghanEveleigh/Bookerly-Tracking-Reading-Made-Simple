@@ -1,9 +1,7 @@
-// src/routes/about.tsx
-
 import { createFileRoute } from "@tanstack/react-router";
 
-import { Library } from "../pages/library";
+import { Login } from "../pages/login";
 
 export const Route = createFileRoute("/login")({
-  component: Library,
+	component: Login,
 });
