@@ -11,6 +11,7 @@ import cors, { type CorsOptions } from 'cors';
 import userRoutes from './routes/user.routes.js';
 import bookRoutes from './routes/book.routes.js';
 import libraryRoutes from './routes/library.routes.js';
+import authRoutes from './routes/auth.routes.js';
 import pool from './config/db.js';
 import { connectRedis } from './config/redis.js';
 import { isAuthenticated } from './middleware/authMiddleware.js';
@@ -57,6 +58,7 @@ await connectRedis()
 
 // User routes manage their own auth per-route.
 // Login/signup are public.
+app.use('/auth', authRoutes);
 app.use('/user', userRoutes);
 app.use('/book', isAuthenticated, bookRoutes);
 app.use('/library', isAuthenticated, libraryRoutes);

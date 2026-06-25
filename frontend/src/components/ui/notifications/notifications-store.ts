@@ -1,8 +1,7 @@
-import { nanoid, ZodNanoID } from "zod";
 import { create } from 'zustand'
 
 export type Notification = {
-    id: ZodNanoID;
+    id: string;
     type: 'info' | 'warning' | 'success' | 'error';
     title: string;
     message?: string;
@@ -10,7 +9,7 @@ export type Notification = {
 type NotificationStore = {
     notifications: Notification[];
     addNotification: (notification: Omit<Notification, 'id'>) => void;
-    dismissNotification: (id: ZodNanoID) => void;
+    dismissNotification: (id: string) => void;
 }
 
 export const useNotifications = create<NotificationStore>()((set) => ({
@@ -19,7 +18,7 @@ export const useNotifications = create<NotificationStore>()((set) => ({
         set((state) => ({
             notifications: [
                 ...state.notifications,
-                { id: nanoid(), ...notification }
+                { id: crypto.randomUUID(), ...notification }
             ]
         })),
     dismissNotification: (id) =>
@@ -27,7 +26,7 @@ export const useNotifications = create<NotificationStore>()((set) => ({
             notifications: [
                 ...state.notifications.filter(
                     (notification) =>
-                        notification.id === id)
+                        notification.id !== id)
             ]
         }))
 }));

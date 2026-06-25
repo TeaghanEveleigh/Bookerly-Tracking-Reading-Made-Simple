@@ -1,8 +1,12 @@
-import Axios, { InternalAxiosRequestConfig } from 'axios';
+import Axios, {
+  AxiosInstance,
+  AxiosRequestConfig,
+  InternalAxiosRequestConfig,
+} from 'axios';
 
-import { useNotifications } from '../components/ui/notifications/notifications-store';
-import { env } from '../config/env';
-import { paths } from '../config/paths';
+import { useNotifications } from '@/components/ui/notifications';
+import { env } from '@/config/env';
+import { paths } from '@/config/paths';
 
 function authRequestInterceptor(config: InternalAxiosRequestConfig) {
   if (config.headers) {
@@ -13,9 +17,24 @@ function authRequestInterceptor(config: InternalAxiosRequestConfig) {
   return config;
 }
 
+type ApiClient = AxiosInstance & {
+  get<T = unknown>(url: string, config?: AxiosRequestConfig): Promise<T>;
+  post<T = unknown>(
+    url: string,
+    data?: unknown,
+    config?: AxiosRequestConfig,
+  ): Promise<T>;
+  patch<T = unknown>(
+    url: string,
+    data?: unknown,
+    config?: AxiosRequestConfig,
+  ): Promise<T>;
+  delete<T = unknown>(url: string, config?: AxiosRequestConfig): Promise<T>;
+};
+
 export const api = Axios.create({
   baseURL: env.API_URL,
-});
+}) as ApiClient;
 
 api.interceptors.request.use(authRequestInterceptor);
 api.interceptors.response.use(

@@ -10,7 +10,7 @@ export const Notifications = () => {
     >
       {notifications.map((notification) => (
         <Notification
-          key={notification.id}
+          key={String(notification.id)}
           notification={notification}
           onDismiss={dismissNotification}
         />

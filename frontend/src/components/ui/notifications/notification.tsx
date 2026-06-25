@@ -1,23 +1,22 @@
-import { ZodNanoID } from 'zod';
 import { Snackbar, Alert } from "@mui/material";
 import React from 'react';
 
 
 export type NotificationProps = {
   notification: {
-    id: ZodNanoID;
+    id: string;
     type: 'success' | 'error' | 'info' | 'warning';
     title: string;
     message?: string;
   };
-  onDismiss: (id: ZodNanoID) => void;
+  onDismiss: (id: string) => void;
 };
 
 export const Notification = ({
   notification: { id, type, title, message },
   onDismiss,
 }: NotificationProps) => {
-    const [open, setOpen] = React.useState(false);
+    const [open, setOpen] = React.useState(true);
     const handleClose = () => {
     onDismiss(id);
     setOpen(false);
@@ -25,7 +24,7 @@ export const Notification = ({
 
   return (
     <Snackbar
-    open={true}
+    open={open}
       autoHideDuration={6000}
       anchorOrigin={{
           vertical: 'top',

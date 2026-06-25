@@ -4,8 +4,11 @@ import { RouterProvider } from "@tanstack/react-router";
 import type { FunctionComponent } from "./common/types";
 import type { TanstackRouter } from "./main";
 import { TanStackRouterDevelopmentTools } from "./components/utils/development-tools/TanStackRouterDevelopmentTools";
+import { queryConfig } from "./lib/react-query";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+	defaultOptions: queryConfig,
+});
 
 type AppProps = { router: TanstackRouter };
 
